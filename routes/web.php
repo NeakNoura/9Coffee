@@ -19,7 +19,9 @@ use App\Http\Controllers\Admins\AdminPaymentController;
 Auth::routes();
 
 // 🟢 Public user pages
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', function () {return redirect()->route('view.login'); // your admin login route
+});
+
 Route::get('products/contact', [ProductsController::class, 'contact'])->name('product.contact');
 Route::get('products/service', [ProductsController::class, 'service'])->name('product.service');
 Route::get('products/menu', [ProductsController::class, 'menu'])->name('product.menu');
@@ -123,14 +125,16 @@ Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
     Route::get('/edit-orders/{id}', [AdminsController::class, 'EditOrders'])->name('edit.orders');
     Route::post('/edit-orders/{id}', [AdminsController::class, 'UpdateOrders'])->name('update.orders');
     Route::delete('/delete-orders/{id}', [AdminsController::class, 'DeleteOrders'])->name('delete.orders');
+    Route::delete('/delete-all-orders', [AdminsController::class, 'DeleteAllOrders'])->name('delete.all.orders');
+
 
     // Products management
     Route::get('/all-products', [AdminsController::class, 'DisplayProducts'])->name('all.products');
     Route::get('/create-products', [AdminsController::class, 'CreateProducts'])->name('create.products');
-    Route::get('/edit-products/{id}', [AdminsController::class, 'EditProducts'])->name('edit.products');
+Route::post('/edit-products/{id}', [AdminsController::class, 'AjaxUpdateProducts'])->name('ajax.edit.products');
     Route::post('/update-products/{id}', [AdminsController::class, 'UpdateProducts'])->name('update.products');
     Route::post('/store-products', [AdminsController::class, 'StoreProducts'])->name('store.products');
-    Route::get('/delete-products/{id}', [AdminsController::class, 'DeleteProducts'])->name('delete.products');
+Route::delete('/delete-products/{id}', [AdminsController::class, 'DeleteProducts'])->name('ajax.delete.products');
 
     // Bookings management
     Route::get('/all-bookings', [AdminsController::class, 'DisplayBookings'])->name('all.bookings');

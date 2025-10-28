@@ -64,12 +64,12 @@
         </div>
 
         {{-- Login as customer link --}}
-        <div class="text-center mt-2">
+        {{-- <div class="text-center mt-2">
             <small class="text-muted">Or login as a customer:</small>
             <a href="{{ route('login') }}" class="btn btn-outline-success w-100 mt-1">
                 <i class="bi bi-person-circle me-1"></i> Customer Login
             </a>
-        </div>
+        </div> --}}
     </div>
 </div>
 @endsection

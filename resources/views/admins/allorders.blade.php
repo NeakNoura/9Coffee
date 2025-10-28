@@ -66,18 +66,26 @@
                                 </span>
                             </td>
                             <td>
-                                <a href="{{ route('edit.orders', $order->id) }}" class="btn btn-sm btn-info rounded-pill">
-                                    Change Status
-                                </a>
-                            </td>
-                            <td>
-                                <form action="{{ route('delete.orders', $order->id)}}" method="POST" onsubmit="return confirm('Are you sure?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger rounded-pill">
-                                        Delete
-                                    </button>
-                                </form>
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-info rounded-pill btn-edit-status"
+                                data-id="{{ $order->id }}"
+                                data-status="{{ $order->status }}">
+                                Change Status
+                            </button>
+                                </td>
+                                 <td>
+                                <form action="{{ route('delete.orders', $order->id)}}" method="POST" class="delete-form">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button"
+                                    class="btn btn-sm btn-danger rounded-pill btn-delete"
+                                    data-name="{{ $order->address }}"
+                                    data-price="{{ number_format($order->price, 2) }}"
+                                    data-id="{{ $order->id }}">
+                                    Delete
+                                </button>
+                            </form>
                             </td>
                         </tr>
                         @endforeach
@@ -87,11 +95,21 @@
                         <tr>
                             <td colspan="7" class="text-end"><strong>Total Price:</strong></td>
                             <td>${{ number_format($allOrders->sum('price'),2) }}</td>
-                            <td colspan="3"></td>
+                            <td colspan="4"></td>
+                            <td></td>
                         </tr>
                     </tfoot>
                 </table>
             </div>
+
+            {{-- ✅ Only ONE Delete All Button --}}
+            <form action="{{ route('delete.all.orders') }}" method="POST" class="mt-3" onsubmit="return confirm('Are you sure you want to delete all orders?');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-trash3-fill"></i> Delete All Orders
+                </button>
+            </form>
 
             <a href="{{ route('admins.dashboard') }}" class="btn btn-light mt-3" style="color:#3e2f2f;">
                 <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
@@ -99,4 +117,70 @@
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tableBody = document.querySelector('table tbody');
+
+    // Edit Status popup
+    tableBody.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-edit-status');
+        if (!btn) return;
+
+        const orderId = btn.dataset.id;
+        const currentStatus = btn.dataset.status;
+
+        Swal.fire({
+            title: 'Change Order Status',
+            input: 'select',
+            inputOptions: {
+                'Pending': 'Pending',
+                'Delivered': 'Delivered',
+                'Cancelled': 'Cancelled'
+            },
+            inputValue: currentStatus,
+            showCancelButton: true,
+            confirmButtonText: 'Update',
+            cancelButtonText: 'Cancel',
+            background: '#3e2f2f',
+            color: '#fff'
+        }).then((result) => {
+            if(result.isConfirmed) {
+                const newStatus = result.value;
+
+                fetch(`/admin/edit-orders/${orderId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({status: newStatus})
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success) {
+                        Swal.fire('Updated!', data.message, 'success');
+
+                        // Update status badge in table
+                        const row = btn.closest('tr');
+                        const statusCell = row.querySelector('td:nth-child(10)');
+                        let colorClass = 'secondary';
+                        if(newStatus === 'Pending') colorClass = 'warning';
+                        else if(newStatus === 'Delivered') colorClass = 'success';
+                        else if(newStatus === 'Cancelled') colorClass = 'danger';
+
+                        statusCell.innerHTML = `<span class="badge bg-${colorClass}">${newStatus}</span>`;
+                        btn.dataset.status = newStatus; // update button data
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
+
+
 @endsection

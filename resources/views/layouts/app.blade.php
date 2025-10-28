@@ -47,12 +47,12 @@
               </button>
               <div class="collapse navbar-collapse" id="ftco-nav">
                 <ul class="navbar-nav ml-auto">
-                  <li class="nav-item active"><a href="{{ route('home') }}" class="nav-link">Home</a></li>
-                  <li class="nav-item"><a href="{{ route('product.menu')}}" class="nav-link">Menu</a></li>
+                  {{-- <li class="nav-item active"><a href="{{ route('') }}" class="nav-link">Home</a></li> --}}
+                  {{-- <li class="nav-item"><a href="{{ route('product.menu')}}" class="nav-link">Menu</a></li>
                   <li class="nav-item"><a href="{{ route('product.service')}}" class="nav-link">Services</a></li>
-                  <li class="nav-item"><a href="{{ route('product.about')}}" class="nav-link">About</a></li>
+                  <li class="nav-item"><a href="{{ route('product.about')}}" class="nav-link">About</a></li> --}}
 
-                  <li class="nav-item"><a href="{{ route('product.contact')}}" class="nav-link">Contact</a></li>
+                  {{-- <li class="nav-item"><a href="{{ route('product.contact')}}" class="nav-link">Contact</a></li> --}}
                   @if(Auth::check())
                   <li class="nav-item cart"><a href="{{ route('cart')}}" class="nav-link"><span class="icon icon-shopping_cart"></span></a>
                     @endif
@@ -61,10 +61,10 @@
                   <li class="nav-item"><a href="{{ route('login') }}" class="nav-link">login</a></li>
                   @endif
 
-                  @if (Route::has('register'))
+                  {{-- @if (Route::has('register'))
                   <li class="nav-item"><a href="{{ route('register') }}" class="nav-link">Register</a></li>
 
-                  @endif
+                  @endif --}}
                   @else
                   <li class="nav-item dropdown">
                     <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"

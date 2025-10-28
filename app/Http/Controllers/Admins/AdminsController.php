@@ -173,26 +173,40 @@ public function DisplayAllUsers()
           return view('admins.editorders',compact('order'));
       }
 
-    public function UpdateOrders(Request $request,$id){
-        $order = Order::find($id);
-        $order->update($request->all());
-        if($order){
-            return Redirect::route('all.orders')->with(['update'=>"order status updated successfully"]);
+    public function UpdateOrders(Request $request, $id){
+    $order = Order::find($id);
+    if (!$order) {
+        return response()->json(['success' => false, 'message' => 'Order not found']);
+    }
+
+    $request->validate([
+        'status' => 'required|in:Pending,Delivered,Cancelled'
+    ]);
+
+    $order->status = $request->status;
+    $order->save();
+
+    return response()->json(['success' => true, 'message' => 'Order status updated successfully']);
+}
+
+
+
+     public function DeleteOrders($id){
+    $order = Order::find($id);
+    if (!$order) {
+        return response()->json(['success' => false, 'message' => 'Order not found']);
+    }
+
+    $order->delete();
+    return response()->json(['success' => true, 'message' => 'Order deleted successfully']);
+}
+
+        public function DeleteAllOrders()
+        {
+            \App\Models\Product\Order::query()->delete();
+
+            return Redirect::route('all.orders')->with(['delete' => "All orders deleted successfully"]);
         }
-
-
-      }
-
-
-      public function DeleteOrders($id){
-        $order = Order::find($id);
-        $order->delete();
-        if($order){
-            return Redirect::route('all.orders')->with(['delete'=>"order delete  successfully"]);
-        }
-
-
-      }
 
       public function DisplayProducts(){
         $products = Product::select()->orderBy('id','asc')->get();
@@ -236,54 +250,50 @@ public function DisplayAllUsers()
         ->with(['success' => "Product created successfully!"]);
 }
 
-    public function DeleteProducts($id){
+  public function DeleteProducts($id)
+{
+    $product = Product::find($id);
+    if (!$product) {
+        return response()->json(['success' => false, 'message' => 'Product not found']);
+    }
+
+    if (File::exists(public_path('assets/images/' . $product->image))) {
+        File::delete(public_path('assets/images/' . $product->image));
+    }
+
+    $product->delete();
+
+    return response()->json(['success' => true, 'message' => 'Product deleted successfully']);
+}
 
 
-        $product = Product::find($id);
-        if(File::exists(public_path('assets/images/' . $product->image))){
-            File::delete(public_path('assets/images/' . $product->image));
-
-        }else{
-
-        }
-        $product->delete();
-
-            if($product)
-        return Redirect::route('all.products')
-        ->with(['delete' => "product delete  successfully"]);
-
-         }
          public function EditProducts($id)
     {
         $product = Product::findOrFail($id);
         return view('admins.edit', compact('product'));
     }
 
-    public function UpdateProducts(Request $request, $id)
-    {
-        $product = Product::findOrFail($id);
-
-        $request->validate([
-            'name' => 'required',
-            'price' => 'required|numeric',
-            'type' => 'required',
-        ]);
-
-        $product->name = $request->name;
-        $product->price = $request->price;
-        $product->type = $request->type;
-
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('assets/images/'), $filename);
-            $product->image = $filename;
-        }
-
-        $product->save();
-
-        return redirect()->route('all.products')->with('success', 'Product updated successfully!');
+  public function AjaxUpdateProducts(Request $request, $id)
+{
+    $product = Product::find($id);
+    if (!$product) {
+        return response()->json(['success' => false, 'message' => 'Product not found']);
     }
+
+    $request->validate([
+        'name' => 'required|max:100',
+        'price' => 'required|numeric',
+        'type' => 'required'
+    ]);
+
+    $product->name = $request->name;
+    $product->price = $request->price;
+    $product->type = $request->type;
+
+    $product->save();
+
+    return response()->json(['success' => true, 'message' => 'Product updated successfully']);
+}
 
 
 
@@ -301,42 +311,38 @@ public function DisplayAllUsers()
               return view('admins.editbooking',compact('booking'));
           }
 
-          public function DeleteBookings($id)
+ public function DeleteBookings($id)
 {
     $booking = Booking::find($id);
-
-    if (!$booking) {
-        return redirect()->back()->with('error', 'Booking not found.');
+    if(!$booking){
+        return response()->json(['success' => false, 'message' => 'Booking not found']);
     }
-
     $booking->delete();
 
-    // ✅ If the table is empty, reset auto-increment to 1
+    // Reset auto-increment if table empty
     if (Booking::count() === 0) {
         DB::statement('ALTER TABLE bookings AUTO_INCREMENT = 1');
     }
 
-    return redirect()->route('all.bookings')
-        ->with('delete', "Booking deleted successfully");
+    return response()->json(['success' => true, 'message' => 'Booking deleted successfully']);
+}
+    public function UpdateBookings(Request $request, $id)
+{
+    $booking = Booking::find($id);
+    if (!$booking) {
+        return response()->json(['success' => false, 'message' => 'Booking not found']);
+    }
+
+    $request->validate([
+        'status' => 'required|in:Pending,Confirmed,Cancelled'
+    ]);
+
+    $booking->status = $request->status;
+    $booking->save();
+
+    return response()->json(['success' => true, 'message' => 'Booking status updated successfully']);
 }
 
-        public function CreateBookings() {
-    return view('admins.createbooking');
-}
-                public function UpdateBookings(Request $request, $id)
-                {
-                    $booking = Booking::findOrFail($id);
-
-                    $request->validate([
-                        'status' => 'required|in:Pending,Proccessing,Delivered'
-                    ]);
-
-                    $booking->status = $request->status;
-                    $booking->save();
-
-                    return redirect()->route('all.bookings')
-                                    ->with('success', 'Booking status updated successfully!');
-                }
 
      public function StoreBookings(Request $request)
 {
@@ -547,7 +553,6 @@ public function paypalSuccess()
         }
     }
 
-    // Clear cart session
     session()->forget('admin_cart');
     session()->forget('admin_cart_total');
 

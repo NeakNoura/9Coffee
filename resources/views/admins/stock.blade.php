@@ -7,7 +7,6 @@
             <h4 class="mb-0">📦 Product Stock Management</h4>
         </div>
         <div class="card-body">
-
             {{-- Flash Messages --}}
             @if(Session::has('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
