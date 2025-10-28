@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models\Product;
+use App\Models\RawMaterial;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,5 +18,19 @@ class Product extends Model
         "description",
         "type",
     ];
+     // Relationship to raw materials
+    public function rawMaterials()
+{
+    return $this->belongsToMany(RawMaterial::class, 'product_raw_material')
+                ->withPivot('quantity_required')
+                ->withTimestamps();
+}
+
+
+    // Relationship to orders
+    public function orders()
+    {
+        return $this->hasMany(\App\Models\Product\Order::class);
+    }
     public  $timestamps = false;
 }

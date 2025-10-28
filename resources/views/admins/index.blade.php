@@ -68,12 +68,11 @@
             </a>
         </li>
             <li>
-                <a href="{{ route('admin.stock') }}">
-                    <span class="icon"><ion-icon name="cube-outline"></ion-icon></span>
-                    <span class="title">Stock</span>
-                </a>
-            </li>
-        <li>
+    <a href="{{ route('admin.raw-material.stock') }}">
+        <span class="icon"><ion-icon name="cube-outline"></ion-icon></span>
+        <span class="title">Stock</span>
+    </a>
+</li>
             <li>
     <a href="{{ route('admin.sales.report') }}">
         <span class="icon">

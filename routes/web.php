@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Products\ProductsController;
 use App\Http\Controllers\Admins\AdminsController;
@@ -111,6 +112,15 @@ Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
     Route::delete('/delete-admin/{id}', [AdminsController::class, 'deleteAdmin'])->name('delete.admin');
     Route::get('/admin/stock', [AdminsController::class, 'viewStock'])->name('admin.stock');
     Route::post('/admin/stock/{id}', [AdminsController::class, 'updateStock'])->name('admin.stock.update');
+    // Raw Material Stock
+Route::get('admin/stock', [AdminsController::class, 'viewRawMaterials'])
+     ->name('admin.raw-material.stock');
+
+
+
+Route::patch('/admin/raw-stock/update/{id}', [AdminsController::class, 'updateRawMaterial'])
+    ->name('admin.raw-material.update');
+
     // Admin Reports & Analytics
     Route::get('admin/reports/sales', [AdminsController::class, 'salesReport'])->name('admin.sales.report');
     Route::get('admin/low-stock', [AdminsController::class, 'lowStock'])->name('admin.low.stock');

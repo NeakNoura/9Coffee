@@ -8,6 +8,7 @@ use App\Models\Product\Product;
 use App\Models\Product\Order;
 use App\Models\Product\Receipt;
 use App\Models\Admin;
+use App\Models\RawMaterial;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Redirect;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cookie;
+
 class AdminsController extends Controller
 {
 
@@ -437,42 +439,62 @@ public function staffCheckout(Request $request)
 {
     $cart = json_decode($request->cart_data, true);
     $paymentMethod = $request->payment_method;
-
     $orderRef = 'ORD-' . now()->format('YmdHis') . '-' . rand(1000,9999);
 
     $ordersCreated = [];
 
     foreach ($cart as $productId => $item) {
-        $product = Product::find($productId);
+        $product = Product::with('rawMaterials')->find($productId);
 
-        if ($product && $product->quantity >= $item['quantity']) {
-
-            $order = Order::create([
-                'product_id' => $productId,
-                'price' => $item['price'] * $item['quantity'],
-                'quantity' => $item['quantity'],
-                'payment_status' => $paymentMethod === 'cash' ? 'Paid' : 'Pending',
-                'status' => 'Pending',
-                'first_name' => 'Staff',
-                'last_name' => '',
-                'state' => '',
-                'address' => '',
-                'phone' => '',
-                'email' => '',
-                'user_id' => Auth::id(),
-                'payment_method' => $paymentMethod,
-                'order_ref' => $orderRef,
-            ]);
-
-            // Deduct stock
-            $product->quantity -= $item['quantity'];
-            $product->save();
-
-            $ordersCreated[] = $order;
+        if (!$product || $product->quantity < $item['quantity']) {
+            continue; // skip if not enough product stock
         }
+
+        // Check if raw materials are sufficient
+        $canFulfill = true;
+        foreach ($product->rawMaterials as $raw) {
+            $requiredQty = $raw->pivot->quantity_required * $item['quantity'];
+            if ($raw->quantity < $requiredQty) {
+                $canFulfill = false;
+                break;
+            }
+        }
+        if (!$canFulfill) {
+            continue; // skip this product if raw materials insufficient
+        }
+
+        // Create the order
+        $order = Order::create([
+            'product_id' => $productId,
+            'price' => $item['price'] * $item['quantity'],
+            'quantity' => $item['quantity'],
+            'payment_status' => $paymentMethod === 'cash' ? 'Paid' : 'Paid',
+            'status' => 'Paid',
+            'first_name' => 'Staff',
+            'last_name' => '',
+            'state' => '',
+            'address' => '',
+            'phone' => '',
+            'email' => '',
+            'user_id' => Auth::id(),
+            'payment_method' => $paymentMethod,
+            'order_ref' => $orderRef,
+        ]);
+
+        // Deduct product stock
+        $product->quantity -= $item['quantity'];
+        $product->save();
+
+        // Deduct raw materials stock
+        foreach ($product->rawMaterials as $raw) {
+            $raw->quantity -= $raw->pivot->quantity_required * $item['quantity'];
+            $raw->save();
+        }
+
+        $ordersCreated[] = $order;
     }
 
-    // Handle Cash Payment via AJAX
+    // Return response
     if ($paymentMethod === 'cash') {
         return response()->json([
             'success' => true,
@@ -485,6 +507,7 @@ public function staffCheckout(Request $request)
     $qrData = route('staff.qr-pay', ['order_ref' => $orderRef]);
     return view('admins.staff-qr', compact('qrData', 'orderRef'));
 }
+
 
 
 public function qrPay($order_ref)
@@ -583,6 +606,7 @@ public function updateStock(Request $request, $id)
 }
 
 
+
 public function salesReport()
 {
     $sales = Order::select(
@@ -631,6 +655,72 @@ public function adminLogs()
     $logs = DB::table('activity_logs')->orderBy('created_at', 'desc')->limit(100)->get();
     return view('admins.logs', compact('logs'));
 }
+
+public function products() {
+    return $this->belongsToMany(Product::class, 'product_raw_material')
+                ->withPivot('quantity_required');
+}
+public function orderProduct(Request $request)
+{
+    $product = Product::findOrFail($request->product_id);
+    $quantity = $request->quantity;
+
+    // Check if stock is enough
+    foreach ($product->rawMaterials as $material) {
+        if ($material->quantity < ($material->pivot->quantity_required * $quantity)) {
+            return back()->with('error', $material->name . ' is not enough!');
+        }
+    }
+
+    // Deduct raw materials
+    foreach ($product->rawMaterials as $material) {
+        $material->quantity -= $material->pivot->quantity_required * $quantity;
+        $material->save();
+    }
+
+    // Create order
+    Order::create([
+        'product_id' => $product->id,
+        'quantity' => $quantity,
+        'price' => $product->price * $quantity,
+        'status' => 'Pending'
+    ]);
+
+    return back()->with('success', 'Order placed and stock updated!');
+}
+// Show raw material stock
+public function viewRawMaterials()
+{
+    $rawMaterials = \App\Models\RawMaterial::orderBy('id', 'asc')->get();
+    return view('admins.stock', compact('rawMaterials'));
+}
+
+
+
+// Update raw material quantity
+public function updateRawMaterial(Request $request, $id)
+{
+    $request->validate([
+        'quantity' => 'required|integer|min:0',
+    ]);
+
+    $material = RawMaterial::findOrFail($id);
+    $material->quantity = $request->quantity;
+    $material->save();
+
+    return redirect()->route('admin.raw-material.stock')->with('success', 'Stock updated successfully!');
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

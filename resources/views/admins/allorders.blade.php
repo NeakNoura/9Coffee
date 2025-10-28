@@ -28,11 +28,7 @@
                     <thead style="background-color: #5a3d30;">
                         <tr class="text-center">
                             <th>#</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>City</th>
-                            <th>State</th>
-                            <th>Phone</th>
+                            <th>Name</th>
                             <th>Product</th>
                             <th>Price</th>
                             <th>Date</th>
@@ -46,11 +42,7 @@
                         <tr class="text-center" style="border-bottom:1px solid #6b4c3b;">
                             <th scope="row">{{ $order->id }}</th>
                             <td>{{ $order->first_name }}</td>
-                            <td>{{ $order->last_name }}</td>
-                            <td>{{ $order->city }}</td>
-                            <td>{{ $order->state }}</td>
-                            <td>{{ $order->phone }}</td>
-                            <td>{{ $order->address }}</td>
+                            <td>{{ $order->product_id }}</td>
                             <td>${{ number_format($order->price,2) }}</td>
                             <td>{{ $order->order_created_at ?? $order->created_at }}</td>
                             <td>
