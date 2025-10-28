@@ -10,23 +10,23 @@ class Order extends Model
     use HasFactory;
 
     protected $table = "orders";
+protected $fillable = [
+    "first_name",
+    "last_name",
+    "state",
+    "address",
+    "city",
+    "zip_code",
+    "phone",
+    "email",
+    "price",
+    "user_id",
+    "status",
+    "product_id",
+    "payment_status",
+    "payment_method",
+];
 
-    protected $fillable = [
-        "first_name",
-        "last_name",
-        "state",
-        "address",
-        "city",
-        "zip_code",
-        "phone",
-        "email",
-        "price",
-        "user_id",
-        "status",
-        "product_id",       // new
-        "payment_status",
-        "order_created_at",  // optional
-    ];
 
     public $timestamps = true;
 
@@ -35,11 +35,6 @@ class Order extends Model
     {
         return $this->belongsTo(Product::class, 'product_id');
     }
-      protected static function booted()
-    {
-        static::creating(function ($order) {
-            $order->order_created_at = now();
-        });
-    }
+
 
 }

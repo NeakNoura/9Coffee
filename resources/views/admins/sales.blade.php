@@ -7,6 +7,10 @@
             </div>
     <div class="card shadow-sm border-0 rounded-4" style="background-color:#3e2f2f; color:#f5f5f5;">
         <div class="card-header" style="background-color:#db770cff; color:#fff;">
+            <a href="{{ route('admin.sales.report.download') }}" class="btn btn-success mb-3">
+    📥 Download Report
+</a>
+
             <h4 class="mb-0">📈 Sales Report (Last 30 Days)</h4>
         </div>
         <div class="card-body">

@@ -161,18 +161,6 @@
         </div>
     </a>
 
-    {{-- <a href="{{ route('all.users') }}" class="card" style="background-color:#00b894; color:#fff;">
-        <div>
-            <div class="numbers" style="font-size:2rem; font-weight:bold;">{{ $usersCount }}</div>
-            <div class="cardName" style="font-size:1rem; font-weight:600; color:#fff; text-shadow:1px 1px 2px rgba(0,0,0,0.5);">
-                Total Customers
-            </div>
-        </div>
-        <div class="iconBx">
-            <ion-icon name="person-outline" style="color:#fff; font-size:2rem;"></ion-icon>
-        </div>
-    </a> --}}
-
     <a href="{{ route('all.bookings') }}" class="card" style="background-color:#fdcb6e; color:#000;">
         <div>
             <div class="numbers" style="font-size:2rem; font-weight:bold;">{{ $productsCount }}</div>
@@ -220,39 +208,42 @@
             <a href="{{ route('all.orders') }}" class="btn">View All</a>
         </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <td>Product</td>
-                    <td>Price</td>
-                    <td>Payment</td>
-                    <td>Status</td>
-                </tr>
-            </thead>
-        <tbody>
-                                    @forelse($recentOrders as $order)
-                                    <tr style="border-bottom:1px solid #6b4c3b;">
-                                        <td>{{ $order->product->id ?? 'N/A' }}</td>
-                                        <td>${{ $order->price }}</td>
-                                        <td>{{ $order->payment_status ?? 'Pending' }}</td>
-                                        <td>
-                                            <span class="badge
-                                                @if(strtolower($order->status)=='pending') bg-warning
-                                                @elseif(strtolower($order->status)=='delivered') bg-success
-                                                @elseif(strtolower($order->status)=='cancelled') bg-danger
-                                                @else bg-secondary
-                                                @endif px-3 py-1 rounded-pill">
-                                                {{ $order->status }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="4" class="text-center">No recent orders</td>
-                                    </tr>
-                                    @endforelse
-                                </tbody>
-        </table>
+     <table>
+    <thead>
+        <tr>
+            <td>Product</td>
+            <td>Price</td>
+            <td>Payment</td>
+            <td>Status</td>
+            <td>Order Date</td> <!-- Added -->
+        </tr>
+    </thead>
+    <tbody>
+        @forelse($recentOrders as $order)
+        <tr style="border-bottom:1px solid #6b4c3b;">
+            <td>{{ $order->product->name ?? 'N/A' }}</td>
+            <td>${{ $order->price }}</td>
+            <td>{{ $order->payment_status ?? 'Pending' }}</td>
+            <td>
+                <span class="badge
+                    @if(strtolower($order->status)=='pending') bg-warning
+                    @elseif(strtolower($order->status)=='delivered') bg-success
+                    @elseif(strtolower($order->status)=='cancelled') bg-danger
+                    @else bg-secondary
+                    @endif px-3 py-1 rounded-pill">
+                    {{ $order->status }}
+                </span>
+            </td>
+            <td>{{ $order->created_at->format('d M Y H:i') }}</td> <!-- Added date -->
+        </tr>
+        @empty
+        <tr>
+            <td colspan="5" class="text-center">No recent orders</td>
+        </tr>
+        @endforelse
+    </tbody>
+</table>
+
     </div>
 
     <!-- ================= Analytics Charts ================= -->

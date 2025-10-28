@@ -44,6 +44,15 @@
                     </tbody>
                 </table>
             </div>
+<!-- Payment Method -->
+<div class="mt-3">
+    <label for="payment_method" class="form-label">Payment Method</label>
+    <select name="payment_method" id="payment_method" class="form-select" required>
+        <option value="cash" selected>Cash</option>
+        <option value="qr">QR Code</option>
+    </select>
+</div>
+
 
             <!-- Checkout Form -->
             <form id="checkout-form" action="{{ route('staff.checkout') }}" method="POST" class="mt-3">
@@ -57,120 +66,24 @@
 
 {{-- Bootstrap Icons --}}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
-{{-- Custom CSS --}}
-<style>
-html, body {
-    height: 100%;
-    background-color: #2e2424;
-    color: #f5f5f5;
-}
-
-.card-header h4 {
-    font-weight: 500;
-}
-
-.staff-sell-section .product-card {
-    background-color: #5a3d30;
-    border: 1px solid #6b4c3b;
-    transition: transform 0.2s, box-shadow 0.2s;
-    cursor: pointer;
-}
-
-.staff-sell-section .product-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 15px rgba(219,119,12,0.4);
-}
-
-.staff-sell-section .product-card img {
-    border-radius: 0.5rem;
-}
-
-.staff-sell-section .btn-success {
-    background-color: #28a745;
-    border: none;
-}
-
-.staff-sell-section .btn-success:hover {
-    background-color: #218838;
-}
-
-.staff-sell-section .btn-danger {
-    background-color: #dc3545;
-    border: none;
-}
-
-.staff-sell-section .btn-danger:hover {
-    background-color: #c82333;
-}
-
-#checkout {
-    background-color: #db770c;
-    color: #fff;
-    font-weight: 500;
-}
-
-#checkout:hover {
-    background-color: #c66509;
-    color: #fff;
-}
-
-.table-responsive {
-    scrollbar-width: thin;
-    scrollbar-color: #db770c #3e2f2f;
-}
-
-.table-responsive::-webkit-scrollbar {
-    width: 8px;
-}
-
-.table-responsive::-webkit-scrollbar-track {
-    background: #3e2f2f;
-}
-
-.table-responsive::-webkit-scrollbar-thumb {
-    background-color: #db770c;
-    border-radius: 4px;
-}
-
-.table-hover tbody tr:hover {
-    background-color: rgba(219, 119, 12, 0.2);
-}
-
-.table th, .table td {
-    border: 1px solid #6b4c3b !important;
-    text-align: center;
-}
-
-@media (max-width: 1200px) {
-    .container-fluid {
-        padding: 1rem;
-    }
-    .col-md-2 {
-        flex: 0 0 30%;
-        max-width: 30%;
-    }
-}
-
-@media (max-width: 768px) {
-    .col-md-2 {
-        flex: 0 0 45%;
-        max-width: 45%;
-    }
-}
-
-@media (max-width: 576px) {
-    .col-md-2 {
-        flex: 0 0 90%;
-        max-width: 90%;
-    }
-}
-</style>
+<!-- SweetAlert2 for toast and popup -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
 let cart = {}; // store cart items
 
-// Add to cart
+function showToast(message, icon='success') {
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: icon,
+        title: message,
+        showConfirmButton: false,
+        timer: 1200,
+        timerProgressBar: true
+    });
+}
+
 document.querySelectorAll('.add-to-cart').forEach(button => {
     button.addEventListener('click', function() {
         const card = this.closest('.product-card');
@@ -178,13 +91,11 @@ document.querySelectorAll('.add-to-cart').forEach(button => {
         const name = card.dataset.name;
         const price = parseFloat(card.dataset.price);
 
-        if(cart[id]) {
-            cart[id].quantity++;
-        } else {
-            cart[id] = { name, price, quantity: 1 };
-        }
+        if(cart[id]) cart[id].quantity++;
+        else cart[id] = { name, price, quantity: 1 };
 
         renderCart();
+        showToast(`${name} added to cart!`, 'success'); // ✅ toast feedback
     });
 });
 
@@ -210,27 +121,65 @@ function renderCart() {
 
     Object.keys(cart).forEach(id => {
         const item = cart[id];
-        tbody.innerHTML += `<tr>
-            <td>${item.name}</td>
-            <td>${item.quantity}</td>
-            <td>$${(item.price * item.quantity).toFixed(2)}</td>
-        </tr>`;
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${item.name}</td>
+                         <td>${item.quantity}</td>
+                         <td>$${(item.price * item.quantity).toFixed(2)}</td>`;
+        row.classList.add('flash'); // animate row when updated
+        tbody.appendChild(row);
     });
 }
 
-// Handle checkout
-document.querySelector('#checkout').addEventListener('click', function(e) {
-    e.preventDefault(); // prevent default form submission
 
+document.querySelector('#checkout').addEventListener('click', function(e){
+    e.preventDefault();
     if(Object.keys(cart).length === 0){
-        alert("Cart is empty!");
+        showToast('Cart is empty!', 'error');
         return;
     }
 
-    const cartDataInput = document.querySelector('#cart_data');
-    cartDataInput.value = JSON.stringify(cart); // send all items as JSON
+    // calculate total
+    let total = 0;
+    Object.values(cart).forEach(item => total += item.price * item.quantity);
 
-    document.querySelector('#checkout-form').submit(); // submit form once
+    Swal.fire({
+        title: 'Confirm Checkout',
+        html: `Total: <strong>$${total.toFixed(2)}</strong>`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Checkout!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if(result.isConfirmed){
+            const data = {
+                cart_data: JSON.stringify(cart),
+                payment_method: document.querySelector('#payment_method').value,
+                _token: '{{ csrf_token() }}'
+            };
+
+            fetch('{{ route("staff.checkout") }}', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.success){
+                    showToast(res.message, 'success');
+                    cart = {}; // clear cart
+                    renderCart();
+                } else {
+                    showToast('Something went wrong!', 'error');
+                }
+            })
+            .catch(err => {
+                showToast('Server error!', 'error');
+                console.error(err);
+            });
+        }
+    });
 });
+
 </script>
+
 @endsection

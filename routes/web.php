@@ -6,7 +6,8 @@ use App\Http\Controllers\Products\ProductsController;
 use App\Http\Controllers\Admins\AdminsController;
 use App\Http\Controllers\Users\UsersController;
 use App\Http\Controllers\HomeController;
-
+use App\Exports\SalesReportExport;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\Admins\AdminPaymentController;
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,8 @@ Route::get('products/success', [ProductsController::class, 'success'])->name('pr
 // 💳 Payment routes
 Route::get('products/paypal', [ProductsController::class, 'paywithpaypal'])->name('products.paypal')->middleware('check.for.price');
 Route::post('products/paypal', [ProductsController::class, 'paywithpaypal'])->name('products.paypal')->middleware('check.for.price');
+// web.php
+Route::get('admin/staff-qr-pay/{order_ref}', [AdminsController::class, 'qrPay'])->name('staff.qr-pay');
 
   Route::middleware(['auth:admin'])->group(function () {
     Route::get('/admin/paypal', [AdminsController::class, 'paywithPaypal'])->name('admin.paypal');
@@ -77,10 +80,13 @@ Route::get('users/menu', [UsersController::class, 'displayOrders'])->name('users
 Route::get('users/bookings', [UsersController::class, 'displayBookings'])->name('users.bookings')->middleware('auth:web');
 Route::get('users/write-reviews', [UsersController::class, 'writeReviews'])->name('write.reviews')->middleware('auth:web');
 Route::post('users/write-reviews', [UsersController::class, 'proccesswriteReviews'])->name('proccess.write.reviews')->middleware('auth:web');
+// web.php
+Route::get('/staff-qr-pay/{order_ref}', [AdminsController::class, 'qrPay'])->name('staff.qr-pay');
 
 // ---------------------------
 // Admin Routes
 // ---------------------------
+
 
 Route::middleware('guest:admin')->group(function () {
     Route::post('/login-user', [ProductsController::class, 'loginUser'])->name('login.user');
@@ -109,7 +115,7 @@ Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
     Route::get('admin/expenses', [AdminsController::class, 'viewExpenses'])->name('admin.expenses');
     Route::post('admin/expenses', [AdminsController::class, 'storeExpense'])->name('admin.expenses.store');
     Route::get('admin/logs', [AdminsController::class, 'adminLogs'])->name('admin.logs');
-
+    Route::get('admin/reports/sales/download', function () {return Excel::download(new SalesReportExport, 'sales_report.xlsx');})->name('admin.sales.report.download');
 
 
     // Orders management

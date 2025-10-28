@@ -6,7 +6,7 @@
 <div class="login-container">
     <div class="login-card">
         <div class="login-header text-center">
-            <img src="{{ asset('assets/images/image_5.jpg') }}" alt="9NineCoffee Logo" class="login-logo">
+            <img src="{{ asset('assets/images/Mocha.jpg') }}" alt="9NineCoffee Logo" class="login-logo">
             <h3 class="fw-bold text-dark">9NineCoffee</h3>
             <p class="text-muted mb-4">Sign in to your account</p>
         </div>

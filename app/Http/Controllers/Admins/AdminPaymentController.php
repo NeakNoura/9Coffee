@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 
 use Illuminate\Http\Request;
-use App\Models\Order; // Make sure you have an Order model
+use App\Models\Product\Order; // Make sure you have an Order model
 use Illuminate\Support\Facades\Session;
 
 

@@ -59,7 +59,7 @@ public function logout(Request $request)
     $request->session()->regenerateToken();
 
     // Forget remember me cookie if it exists
-    Cookie::queue(Cookie::forget(Auth::guard('admin')->getRecallerName()));
+    Cookie::queue(Cookie::forget('remember_admin_' . sha1('admin')));
 
     // Redirect to admin login
     return redirect()->route('view.login');
@@ -417,7 +417,7 @@ public function StaffSellProduct(Request $request)
         'first_name' => $request->first_name ?? 'Staff',
         'last_name' => $request->last_name ?? '',
         'state' => $request->state ?? '',
-        'user_id' => auth()->id(),
+        'user_id' => Auth::id(),
     ]);
 
     // Deduct sold quantity from product stock
@@ -429,18 +429,74 @@ public function StaffSellProduct(Request $request)
 
 public function staffCheckout(Request $request)
 {
-    $cart = json_decode($request->cart_data, true) ?? [];
-    $total = 0;
-    foreach ($cart as $item) {
-        $total += $item['price'] * $item['quantity'];
+    $cart = json_decode($request->cart_data, true);
+    $paymentMethod = $request->payment_method;
+
+    $orderRef = 'ORD-' . now()->format('YmdHis') . '-' . rand(1000,9999);
+
+    $ordersCreated = [];
+
+    foreach ($cart as $productId => $item) {
+        $product = Product::find($productId);
+
+        if ($product && $product->quantity >= $item['quantity']) {
+
+            $order = Order::create([
+                'product_id' => $productId,
+                'price' => $item['price'] * $item['quantity'],
+                'quantity' => $item['quantity'],
+                'payment_status' => $paymentMethod === 'cash' ? 'Paid' : 'Pending',
+                'status' => 'Pending',
+                'first_name' => 'Staff',
+                'last_name' => '',
+                'state' => '',
+                'address' => '',
+                'phone' => '',
+                'email' => '',
+                'user_id' => Auth::id(),
+                'payment_method' => $paymentMethod,
+                'order_ref' => $orderRef,
+            ]);
+
+            // Deduct stock
+            $product->quantity -= $item['quantity'];
+            $product->save();
+
+            $ordersCreated[] = $order;
+        }
     }
 
-    // Store in session for PayPal
-    session(['admin_cart' => $cart]);
-    session(['admin_cart_total' => $total]);
+    // Handle Cash Payment via AJAX
+    if ($paymentMethod === 'cash') {
+        return response()->json([
+            'success' => true,
+            'message' => 'Cash payment completed!',
+            'orders' => $ordersCreated,
+        ]);
+    }
 
-    return view('admins.staff_checkout', compact('cart', 'total'));
+    // QR Payment
+    $qrData = route('staff.qr-pay', ['order_ref' => $orderRef]);
+    return view('admins.staff-qr', compact('qrData', 'orderRef'));
 }
+
+
+public function qrPay($order_ref)
+{
+    $orders = Order::where('order_ref', $order_ref)->get();
+
+    if($orders->isEmpty()) {
+        return "Order not found!";
+    }
+
+    // Mark payment as successful
+    foreach($orders as $order){
+        $order->update(['payment_status' => 'Paid']);
+    }
+
+    return "Payment successful! Thank you.";
+}
+
 
 
 public function paywithPaypal()

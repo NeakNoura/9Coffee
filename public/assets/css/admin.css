@@ -1,5 +1,6 @@
 /* =========== Google Fonts ============ */
-@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&family=Roboto:wght@400;500;700&display=swap");
 
 /* =============== Globals ============== */
 * {
@@ -17,13 +18,20 @@
   --black2: #999;
 }
 
-body {
-  min-height: 100vh;
-  width: 100%;
-  overflow-x: hidden;
-  background: url("{{ asset('images/coffee-bg.jpg') }}") no-repeat center center fixed;
-  background-size: cover;
+/* General admin text */
+html, body {
+    font-family: 'Roboto', sans-serif !important; /* important to override Bootstrap */
 }
+
+html, body, input, select, textarea, button, td, th, a, span, p, li {
+    font-family: 'Roboto', sans-serif !important;
+}
+
+
+button, input, select, textarea, a, td, th, span, p, li {
+    font-family: 'Roboto', sans-serif !important;
+}
+
 
 /* =============== Navigation ================ */
 .navigation {
@@ -45,7 +53,111 @@ body {
   padding: 0;
   margin: 0;
 }
+html, body {
+    height: 100%;
+    background-color: #2e2424;
+    color: #f5f5f5;
+}
 
+.card-header h4 {
+    font-weight: 500;
+}
+
+.staff-sell-section .product-card {
+    background-color: #5a3d30;
+    border: 1px solid #6b4c3b;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.staff-sell-section .product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(219,119,12,0.4);
+}
+
+.staff-sell-section .product-card img {
+    border-radius: 0.5rem;
+}
+
+.staff-sell-section .btn-success {
+    background-color: #28a745;
+    border: none;
+}
+
+.staff-sell-section .btn-success:hover {
+    background-color: #218838;
+}
+
+.staff-sell-section .btn-danger {
+    background-color: #dc3545;
+    border: none;
+}
+
+.staff-sell-section .btn-danger:hover {
+    background-color: #c82333;
+}
+
+#checkout {
+    background-color: #db770c;
+    color: #fff;
+    font-weight: 500;
+}
+
+#checkout:hover {
+    background-color: #c66509;
+    color: #fff;
+}
+
+.table-responsive {
+    scrollbar-width: thin;
+    scrollbar-color: #db770c #3e2f2f;
+}
+
+.table-responsive::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #3e2f2f;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background-color: #db770c;
+    border-radius: 4px;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(219, 119, 12, 0.2);
+}
+
+.table th, .table td {
+    border: 1px solid #6b4c3b !important;
+    text-align: center;
+}
+
+@media (max-width: 1200px) {
+    .container-fluid {
+        padding: 1rem;
+    }
+    .col-md-2 {
+        flex: 0 0 30%;
+        max-width: 30%;
+    }
+}
+
+@media (max-width: 768px) {
+    .col-md-2 {
+        flex: 0 0 45%;
+        max-width: 45%;
+    }
+}
+
+@media (max-width: 576px) {
+    .col-md-2 {
+        flex: 0 0 90%;
+        max-width: 90%;
+    }
+}
 .navigation ul li {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* a little more visible but still soft */
   margin: 3px 0;
@@ -298,6 +410,14 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-gap: 60px;
+}
+@keyframes flash {
+    0% { background-color: #db770c33; }
+    100% { background-color: transparent; }
+}
+
+.flash {
+    animation: flash 0.5s ease;
 }
 
 .cardBox .card {
