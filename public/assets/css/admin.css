@@ -47,28 +47,28 @@ body {
 }
 
 .navigation ul li {
-  position: relative;
-  width: 100%;
-  margin-bottom: 10px;
-  border-radius: 0 20px 20px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* a little more visible but still soft */
+  margin: 3px 0;
+  transition: background 0.3s ease;
 }
 
+.navigation ul li:last-child {
+  border-bottom: none;
+}
+
+
+/* Hover and padding for better visual */
 .navigation ul li a {
   display: flex;
   align-items: center;
+  padding: 10px 18px;
+  color: #f1f1f1;
   text-decoration: none;
-  color: #f5f5f5;
-  padding: 12px 20px;
-  transition: all 0.3s ease;
-  font-weight: 500;
+  border-radius: 8px;
 }
 
-.navigation ul li a .icon {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-width: 35px;
-  font-size: 1.5rem;
+.navigation ul li:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .navigation ul li a .title {

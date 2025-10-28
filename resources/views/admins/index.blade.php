@@ -3,83 +3,127 @@
 
 <body>
     <div class="container">
-        <div class="navigation">
-            <ul>
-                <li>
-                    <a href="{{ route('admins.dashboard') }}">
-                        <span class="icon">
-                            <ion-icon name="home"></ion-icon>
-                        </span>
-                        <span class="title">Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('all.bookings') }}">
-                        <span class="icon">
-                            <ion-icon name="calendar-outline"></ion-icon>
-                        </span>
-                        <span class="title">Bookings</span>
-                    </a>
-                </li>
+       <div class="navigation">
+    <ul>
+        <li>
+            <a href="{{ route('admins.dashboard') }}">
+                <span class="icon">
+                    <ion-icon name="home"></ion-icon>
+                </span>
+                <span class="title">Dashboard</span>
+            </a>
+        </li>
 
-                <li>
-                    <a href="{{ route('admins.help') }}">
-                        <span class="icon">
-                            <ion-icon name="help-outline"></ion-icon>
-                        </span>
-                        <span class="title">Help</span>
-                    </a>
-                </li>
+        <li>
+            <a href="{{ route('all.bookings') }}">
+                <span class="icon">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                </span>
+                <span class="title">Bookings</span>
+            </a>
+        </li>
 
-                            <li>
-                    <a href="{{ route('create.products') }}">
-                        <span class="icon">
-                            <ion-icon name="cube-outline"></ion-icon>
-                        </span>
-                        <span class="title">Add Item</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('all.products') }}">
-                        <span class="icon">
-                            <ion-icon name="cart-outline"></ion-icon>
-                        </span>
-                        <span class="title">Products</span>
-                    </a>
-                </li>
-                 <li>
-                <a href="{{ route('staff.sell.form') }}">
-                    <span class="icon">
-                        <ion-icon name="cash-outline"></ion-icon>
-                    </span>
-                    <span class="title">Sell Product</span>
-                </a>
-            </li>
-         <li>
-    <a href="{{ route('all.orders') }}">
+        <li>
+            <a href="{{ route('admins.help') }}">
+                <span class="icon">
+                    <ion-icon name="help-outline"></ion-icon>
+                </span>
+                <span class="title">Help</span>
+            </a>
+        </li>
+
+        <li>
+    <a href="{{ route('create.products') }}">
         <span class="icon">
-            <ion-icon name="bar-chart-outline"></ion-icon>
+            <ion-icon name="layers-outline"></ion-icon> <!-- stacked boxes, looks like stock -->
         </span>
-        <span class="title">Report Sale</span>
+        <span class="title">Add Item</span>
     </a>
 </li>
 
-               <li>
-                <a href="{{ route('admin.logout') }}"
-                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <span class="icon">
-                        <ion-icon name="log-out-outline"></ion-icon>
-                    </span>
-                    <span class="title">Logout</span>
+        <li>
+            <a href="{{ route('all.products') }}">
+                <span class="icon">
+                    <ion-icon name="cart-outline"></ion-icon>
+                </span>
+                <span class="title">Products</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ route('staff.sell.form') }}">
+                <span class="icon">
+                    <ion-icon name="cash-outline"></ion-icon>
+                </span>
+                <span class="title">Sell Product</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ route('all.orders') }}">
+                <span class="icon">
+                    <ion-icon name="bar-chart-outline"></ion-icon>
+                </span>
+                <span class="title">Report Sale</span>
+            </a>
+        </li>
+            <li>
+                <a href="{{ route('admin.stock') }}">
+                    <span class="icon"><ion-icon name="cube-outline"></ion-icon></span>
+                    <span class="title">Stock</span>
                 </a>
-
-                <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" class="d-none">
-                    @csrf
-                </form>
             </li>
+        <li>
+            <li>
+    <a href="{{ route('admin.sales.report') }}">
+        <span class="icon">
+            <ion-icon name="bar-chart-outline"></ion-icon>
+        </span>
+        <span class="title">Sales Report</span>
+    </a>
+</li>
 
-            </ul>
-        </div>
+<li>
+    <a href="{{ route('admin.low.stock') }}">
+        <span class="icon">
+            <ion-icon name="warning-outline"></ion-icon>
+        </span>
+        <span class="title">Low Stock</span>
+    </a>
+</li>
+
+<li>
+    <a href="{{ route('admin.expenses') }}">
+        <span class="icon">
+            <ion-icon name="cash-outline"></ion-icon>
+        </span>
+        <span class="title">Expenses</span>
+    </a>
+</li>
+
+<li>
+    <a href="{{ route('admin.logs') }}">
+        <span class="icon">
+            <ion-icon name="document-text-outline"></ion-icon>
+        </span>
+        <span class="title">Logs</span>
+    </a>
+</li>
+<li>
+            <a href="{{ route('admin.logout') }}"
+               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <span class="icon">
+                    <ion-icon name="log-out-outline"></ion-icon>
+                </span>
+                <span class="title">Logout</span>
+            </a>
+            <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" class="d-none">
+                @csrf
+            </form>
+        </li>
+    </ul>
+</div>
+
 
 
         <!-- ========================= Main ==================== -->
@@ -170,59 +214,59 @@
 
             <!-- ================ Order Details List ================= -->
             <div class="details">
-             <div class="recentOrders">
-    <div class="cardHeader">
-        <h2>Recent Orders</h2>
-        <a href="{{ route('all.orders') }}" class="btn">View All</a>
+                <div class="recentOrders">
+        <div class="cardHeader">
+            <h2>Recent Orders</h2>
+            <a href="{{ route('all.orders') }}" class="btn">View All</a>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <td>Product</td>
+                    <td>Price</td>
+                    <td>Payment</td>
+                    <td>Status</td>
+                </tr>
+            </thead>
+        <tbody>
+                                    @forelse($recentOrders as $order)
+                                    <tr style="border-bottom:1px solid #6b4c3b;">
+                                        <td>{{ $order->product->id ?? 'N/A' }}</td>
+                                        <td>${{ $order->price }}</td>
+                                        <td>{{ $order->payment_status ?? 'Pending' }}</td>
+                                        <td>
+                                            <span class="badge
+                                                @if(strtolower($order->status)=='pending') bg-warning
+                                                @elseif(strtolower($order->status)=='delivered') bg-success
+                                                @elseif(strtolower($order->status)=='cancelled') bg-danger
+                                                @else bg-secondary
+                                                @endif px-3 py-1 rounded-pill">
+                                                {{ $order->status }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center">No recent orders</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+        </table>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <td>Product</td>
-                <td>Price</td>
-                <td>Payment</td>
-                <td>Status</td>
-            </tr>
-        </thead>
-       <tbody>
-                                @forelse($recentOrders as $order)
-                                <tr style="border-bottom:1px solid #6b4c3b;">
-                                    <td>{{ $order->product->id ?? 'N/A' }}</td>
-                                    <td>${{ $order->price }}</td>
-                                    <td>{{ $order->payment_status ?? 'Pending' }}</td>
-                                    <td>
-                                        <span class="badge
-                                            @if(strtolower($order->status)=='pending') bg-warning
-                                            @elseif(strtolower($order->status)=='delivered') bg-success
-                                            @elseif(strtolower($order->status)=='cancelled') bg-danger
-                                            @else bg-secondary
-                                            @endif px-3 py-1 rounded-pill">
-                                            {{ $order->status }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="4" class="text-center">No recent orders</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-    </table>
-</div>
-
-<!-- ================= Analytics Charts ================= -->
-<!-- ================= Analytics Charts ================= -->
-    <div class="analytics col-12">
-        <div class="card">
-            <div class="card-header">
-                <h2>Analytics</h2>
-            </div>
-            <div class="card-body">
-                <canvas id="analyticsChart" style="width:100%; height:500px;"></canvas>
+    <!-- ================= Analytics Charts ================= -->
+    <!-- ================= Analytics Charts ================= -->
+        <div class="analytics col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Analytics</h2>
+                </div>
+                <div class="card-body">
+                    <canvas id="analyticsChart" style="width:100%; height:500px;"></canvas>
+                            </div>
                         </div>
                     </div>
-                </div>
                 </tbody>
                 </table>
             </div>

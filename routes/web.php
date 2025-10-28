@@ -7,6 +7,7 @@ use App\Http\Controllers\Admins\AdminsController;
 use App\Http\Controllers\Users\UsersController;
 use App\Http\Controllers\HomeController;
 
+use App\Http\Controllers\Admins\AdminPaymentController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -100,6 +101,16 @@ Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
     Route::get('/edit-admin/{id}', [AdminsController::class, 'editAdmin'])->name('edit.admin');
     Route::post('/update-admin/{id}', [AdminsController::class, 'updateAdmin'])->name('update.admins');
     Route::delete('/delete-admin/{id}', [AdminsController::class, 'deleteAdmin'])->name('delete.admin');
+    Route::get('/admin/stock', [AdminsController::class, 'viewStock'])->name('admin.stock');
+    Route::post('/admin/stock/{id}', [AdminsController::class, 'updateStock'])->name('admin.stock.update');
+    // Admin Reports & Analytics
+    Route::get('admin/reports/sales', [AdminsController::class, 'salesReport'])->name('admin.sales.report');
+    Route::get('admin/low-stock', [AdminsController::class, 'lowStock'])->name('admin.low.stock');
+    Route::get('admin/expenses', [AdminsController::class, 'viewExpenses'])->name('admin.expenses');
+    Route::post('admin/expenses', [AdminsController::class, 'storeExpense'])->name('admin.expenses.store');
+    Route::get('admin/logs', [AdminsController::class, 'adminLogs'])->name('admin.logs');
+
+
 
     // Orders management
     Route::get('/all-orders', [AdminsController::class, 'DisplayAllOrders'])->name('all.orders');
@@ -133,6 +144,7 @@ Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
     Route::get('/staff-sell', [AdminsController::class, 'StaffSellForm'])->name('staff.sell.form');
     Route::post('/staff-sell', [AdminsController::class, 'StaffSellProduct'])->name('staff.sell');
     Route::post('/staff-checkout', [AdminsController::class, 'staffCheckout'])->name('staff.checkout');
+    Route::get('/staff-checkout', [AdminsController::class, 'staffCheckout'])->name('staff.checkout');
 });
 
     Route::post('/store-bookings', [AdminsController::class, 'StoreBookings'])->name('store.bookings');

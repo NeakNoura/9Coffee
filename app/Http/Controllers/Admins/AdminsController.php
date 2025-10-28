@@ -59,7 +59,7 @@ public function logout(Request $request)
     $request->session()->regenerateToken();
 
     // Forget remember me cookie if it exists
-    Cookie::queue(Cookie::forget(Auth::guard('admin')->viaRemember()));
+    Cookie::queue(Cookie::forget(Auth::guard('admin')->getRecallerName()));
 
     // Redirect to admin login
     return redirect()->route('view.login');
@@ -160,6 +160,8 @@ public function DisplayAllUsers()
     $users = User::orderBy('id', 'asc')->get();
     return view('admins.allusers', compact('users'));
 }
+
+
     public function DisplayAllOrders(){
       $allOrders = Order::select()->orderBy('created_at','desc')->get();
 
@@ -177,13 +179,19 @@ public function DisplayAllUsers()
         if($order){
             return Redirect::route('all.orders')->with(['update'=>"order status updated successfully"]);
         }
+
+
       }
+
+
       public function DeleteOrders($id){
         $order = Order::find($id);
         $order->delete();
         if($order){
             return Redirect::route('all.orders')->with(['delete'=>"order delete  successfully"]);
         }
+
+
       }
 
       public function DisplayProducts(){
@@ -201,27 +209,33 @@ public function DisplayAllUsers()
 
       }
 
-      public function StoreProducts(Request $request){
-
+      public function StoreProducts(Request $request)
+{
+    $request->validate([
+        'name' => 'required|unique:products,name|max:100',
+        'price' => 'required|numeric',
+        'type' => 'required',
+        'image' => 'required|image|mimes:jpeg,png,jpg,gif',
+        'description' => 'nullable',
+    ]);
 
     $descriptionPath = 'assets/images/';
     $myimage = $request->image->getClientOriginalName();
     $request->image->move(public_path($descriptionPath), $myimage);
-    $storeProducts = Product::Create([
+
+    Product::create([
         'name' => $request->name,
         'price' => $request->price,
         'image' => $myimage,
         'description' => $request->description,
         'type' => $request->type,
-
-
+        'quantity' => $request->quantity ?? 0,
     ]);
-    if($storeProducts){
-        return Redirect::route('all.products')
-                ->with(['success' => "product created  successfully"]);
-    }
 
-    }
+    return Redirect::route('all.products')
+        ->with(['success' => "Product created successfully!"]);
+}
+
     public function DeleteProducts($id){
 
 
@@ -459,13 +473,13 @@ public function paypalSuccess()
     'payment_status' => 'Paid',
     'status' => 'Completed',
     'first_name' => 'Staff',
-    'last_name' => 'Thim',
+    'last_name' => '',
     'state' => 'POS Sale',
     'user_id' => auth('admin')->id() ?? null,
-    'address' => 'ToulKork',  // mandatory
-    'city' => 'PhnomPenh',
-    'zip_code' => '0000011',
-    'phone' => '0975777899',
+    'address' => 'N/A',  // mandatory
+    'city' => 'N/A',
+    'zip_code' => '00000',
+    'phone' => '0000000000',
     'email' => 'staff@pos.local'
 ]);
 
@@ -484,6 +498,78 @@ public function paypalSuccess()
     return view('admins.paypal-success')->with('success', 'Payment and order recorded successfully!');
 }
 
+public function viewStock()
+{
+    $products = Product::select('name', DB::raw('MAX(id) as id'), DB::raw('MAX(price) as price'), DB::raw('SUM(quantity) as quantity'))
+        ->groupBy('name')
+        ->orderBy('id', 'asc')
+        ->get();
+
+    return view('admins.stock', compact('products'));
+}
+
+public function updateStock(Request $request, $id)
+{
+    $request->validate([
+        'quantity' => 'required|integer|min:0',
+    ]);
+
+    $product = Product::findOrFail($id);
+    $product->quantity = $request->quantity;
+    $product->save();
+
+    return redirect()->route('admin.stock')->with('success', 'Stock updated successfully!');
+}
+
+
+public function salesReport()
+{
+    $sales = Order::select(
+        DB::raw('DATE(created_at) as date'),
+        DB::raw('SUM(price) as total_sales'),
+        DB::raw('COUNT(id) as total_orders')
+    )
+    ->groupBy('date')
+    ->orderBy('date', 'desc')
+    ->limit(30)
+    ->get();
+
+    return view('admins.sales', compact('sales'));
+
+
+}
+public function lowStock()
+{
+    $lowStockProducts = Product::where('quantity', '<', 5)->get();
+    return view('admins.low_stock', compact('lowStockProducts'));
+}
+public function viewExpenses()
+{
+    $expenses = DB::table('expenses')->orderBy('created_at', 'desc')->get();
+    return view('admins.expenses', compact('expenses'));
+}
+
+public function storeExpense(Request $request)
+{
+    $request->validate([
+        'description' => 'required|string|max:255',
+        'amount' => 'required|numeric|min:0'
+    ]);
+
+    DB::table('expenses')->insert([
+        'description' => $request->description,
+        'amount' => $request->amount,
+        'created_at' => now(),
+        'updated_at' => now()
+    ]);
+
+    return redirect()->route('admin.expenses')->with('success', 'Expense recorded successfully!');
+}
+public function adminLogs()
+{
+    $logs = DB::table('activity_logs')->orderBy('created_at', 'desc')->limit(100)->get();
+    return view('admins.logs', compact('logs'));
+}
 
 
 }
