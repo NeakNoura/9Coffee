@@ -1,19 +1,83 @@
 <?php
-
 namespace App\Http\Controllers\Admins;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Product\Product;
 use App\Models\RawMaterial;
+use App\Models\Product\Order;
+
 
 class RawMaterialController extends Controller
 {
-    public function update(Request $request, $id)
+    // Show all raw materials
+    public function index()
     {
-        $material = RawMaterial::findOrFail($id);
-        $material->update(['quantity' => $request->quantity]);
-
-        return redirect()->back()->with('success', 'Raw material stock updated successfully.');
+        $rawMaterials = RawMaterial::orderBy('id', 'asc')->get();
+        return view('admins.stock', compact('rawMaterials'));
     }
 
+    // Update raw material quantity
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'quantity' => 'required|integer|min:0',
+        ]);
+
+        $material = RawMaterial::findOrFail($id);
+        $material->quantity = $request->quantity;
+        $material->save();
+
+        return redirect()->route('admin.raw-material.stock')->with('success', 'Stock updated successfully!');
+    }
+
+    // Place an order using raw materials
+    public function orderProduct(Request $request)
+    {
+        $product = Product::findOrFail($request->product_id);
+        $quantity = $request->quantity;
+
+        foreach ($product->rawMaterials as $material) {
+            if ($material->quantity < ($material->pivot->quantity_required * $quantity)) {
+                return back()->with('error', $material->name . ' is not enough!');
+            }
+        }
+
+        foreach ($product->rawMaterials as $material) {
+            $material->quantity -= $material->pivot->quantity_required * $quantity;
+            $material->save();
+        }
+
+        Order::create([
+            'product_id' => $product->id,
+            'quantity' => $quantity,
+            'price' => $product->price * $quantity,
+            'status' => 'Pending'
+        ]);
+
+        return back()->with('success', 'Order placed and stock updated!');
+    }
+
+// Show raw material stock
+public function viewRawMaterials()
+{
+    $rawMaterials = \App\Models\RawMaterial::orderBy('id', 'asc')->get();
+    return view('admins.stock', compact('rawMaterials'));
+}
+
+
+
+// Update raw material quantity
+public function updateRawMaterial(Request $request, $id)
+{
+    $request->validate([
+        'quantity' => 'required|integer|min:0',
+    ]);
+
+    $material = RawMaterial::findOrFail($id);
+    $material->quantity = $request->quantity;
+    $material->save();
+
+    return redirect()->route('admin.raw-material.stock')->with('success', 'Stock updated successfully!');
+}
 }

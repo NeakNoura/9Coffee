@@ -45,10 +45,7 @@
 
     </td>
 </tr>
-@endforeach
-
-
-                    </tbody>
+@endforeach   </tbody>
                 </table>
             </div>
 
