@@ -1,6 +1,6 @@
-
 document.addEventListener('DOMContentLoaded', function() {
     const tableBody = document.querySelector('table tbody');
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     // DELETE
     tableBody.addEventListener('click', function(e) {
@@ -22,18 +22,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetch(`/admin/delete-products/${id}`, {
                     method: 'DELETE',
                     headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-CSRF-TOKEN': csrfToken,
                         'Accept': 'application/json'
                     }
                 })
                 .then(res => res.json())
                 .then(data => {
-                    if(data.success){
+                    if (data.success) {
                         Swal.fire('Deleted!', data.message, 'success');
                         btn.closest('tr').remove();
                     } else {
                         Swal.fire('Error', data.message, 'error');
                     }
+                })
+                .catch(() => {
+                    Swal.fire('Error', 'Request failed or token invalid.', 'error');
                 });
             }
         });
@@ -57,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
             showCancelButton: true,
             confirmButtonText: 'Update'
         }).then(result => {
-            if(result.isConfirmed){
+            if (result.isConfirmed) {
                 const formData = {
                     name: document.getElementById('swal-name').value,
                     price: document.getElementById('swal-price').value,
@@ -67,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetch(`/admin/edit-products/${id}`, {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-CSRF-TOKEN': csrfToken,
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     },
@@ -75,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then(res => res.json())
                 .then(data => {
-                    if(data.success){
+                    if (data.success) {
                         Swal.fire('Updated!', data.message, 'success');
                         const row = btn.closest('tr');
                         row.querySelector('td:nth-child(2)').textContent = formData.name;
@@ -83,6 +86,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     } else {
                         Swal.fire('Error', data.message, 'error');
                     }
+                })
+                .catch(() => {
+                    Swal.fire('Error', 'Request failed or token invalid.', 'error');
                 });
             }
         });

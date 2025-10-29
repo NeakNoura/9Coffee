@@ -60,7 +60,7 @@
         {{-- Register link --}}
         <div class="text-center mt-4">
             <small class="text-muted">Don’t have an account?</small>
-            <a href="{{ route('register') }}" class="text-decoration-none fw-semibold text-primary">Register</a>
+            <a href="#" class="text-decoration-none fw-semibold text-primary">Register</a>
         </div>
 
         {{-- Login as customer link --}}

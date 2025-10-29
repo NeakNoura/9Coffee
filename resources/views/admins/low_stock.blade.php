@@ -10,29 +10,32 @@
             <h4 class="mb-0">⚠️ Low Stock Products</h4>
         </div>
         <div class="card-body">
-            <table class="table table-hover table-bordered" style="color:#f5f5f5;">
-                <thead style="background-color:#5a3d30;">
-                    <tr class="text-center">
-                        <th>#</th>
-                        <th>Product Name</th>
-                        <th>Quantity</th>
-                    </tr>
-                </thead>
-                <tbody class="text-center">
-                    @forelse ($lowStockProducts as $product)
-                        <tr>
-                            <td>{{ $product->id }}</td>
-                            <td>{{ $product->name }}</td>
-                            <td>
-                                <span class="badge bg-danger">{{ $product->quantity }}</span>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr><td colspan="3">All products are well stocked 🎉</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    <table class="table table-hover table-bordered" style="color:#f5f5f5;">
+        <thead style="background-color:#5a3d30;">
+            <tr class="text-center">
+                <th>#</th>
+                <th>Product Name</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            @php $counter = 1; @endphp
+            @forelse ($lowStockProducts as $product)
+                <tr>
+                    <td>{{ $counter }}</td>
+                    <td>{{ $product->name }}</td>
+                    <td>
+                        <span class="badge bg-danger">{{ $product->quantity }}</span>
+                    </td>
+                </tr>
+                @php $counter++; @endphp
+            @empty
+                <tr><td colspan="3">All products are well stocked 🎉</td></tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+
     </div>
 </div>
 @endsection

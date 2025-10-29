@@ -48,6 +48,16 @@ button, input, select, textarea, a, td, th, span, p, li {
   padding-top: 20px;
 }
 
+.status-select {
+    background-color: #3e2f2f !important; /* matches card */
+    color: #680909 !important;
+    border: 1px solid #6b4c3b;
+}
+.status-select option {
+    background-color: #3e2f2f;
+    color: #d61717;
+}
+
 .navigation ul {
   list-style: none;
   padding: 0;
@@ -158,25 +168,25 @@ html, body {
         max-width: 90%;
     }
 }
+.navigation ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
 .navigation ul li {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* a little more visible but still soft */
-  margin: 3px 0;
-  transition: background 0.3s ease;
+    border-bottom: 2px solid #db770c; /* simple bold bottom border */
 }
 
 .navigation ul li:last-child {
-  border-bottom: none;
+    border-bottom: none; /* remove border for the last item */
 }
-
-
-/* Hover and padding for better visual */
 .navigation ul li a {
-  display: flex;
-  align-items: center;
-  padding: 10px 18px;
-  color: #f1f1f1;
-  text-decoration: none;
-  border-radius: 8px;
+    display: block;
+    padding: 12px 20px;
+    color: #f5f5f5;
+    font-weight: bold;
+    text-decoration: none;
 }
 
 .navigation ul li:hover {
@@ -194,9 +204,8 @@ html, body {
   background-color: #db770cff;
 }
 
-.navigation ul li:hover a,
-.navigation ul li.hovered a {
-  color: #fff;
+.navigation ul li a:hover {
+    background-color: #5a3d30; /* optional hover effect */
 }
 
 /* Active link style */

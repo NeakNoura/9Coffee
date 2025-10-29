@@ -3,6 +3,9 @@
 @section('content')
 <div class="row">
     <div class="col">
+        {{-- CSRF Token for AJAX --}}
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
         <div class="card shadow-sm rounded-4" style="background-color: #3e2f2f; color: #f5f5f5; border:1px solid #6b4c3b;">
             <div class="card-body">
 
@@ -13,6 +16,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </p>
                 @endif
+
                 @if (Session::has('delete'))
                     <p class="alert alert-danger alert-dismissible fade show" role="alert">
                         {{ Session::get('delete') }}
@@ -22,14 +26,14 @@
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="card-title mb-0">All Products</h5>
-                    <a href="{{route('create.products')}}" class="btn btn-warning text-dark">Create Product</a>
+                    <a href="{{ route('create.products') }}" class="btn btn-warning text-dark">Create Product</a>
                 </div>
 
                 {{-- Products Table --}}
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle" style="color:#f5f5f5;">
+                    <table class="table table-hover align-middle text-center" style="color:#f5f5f5;">
                         <thead style="background-color:#6b4c3b;">
-                            <tr class="text-center">
+                            <tr>
                                 <th>#</th>
                                 <th>Product Name</th>
                                 <th>Image</th>
@@ -39,41 +43,51 @@
                                 <th>Delete</th>
                             </tr>
                         </thead>
-                        <tbody>
+                       <tbody>
+                            @php $counter = 1; @endphp
                             @foreach ($products as $product)
-<tr class="text-center" style="border-bottom:1px solid #5a3d30;">
-    <th scope="row">{{ $product->id }}</th>
-    <td>{{ $product->name }}</td>
-    <td>
-        <img src="{{ asset('assets/images/'.$product->image) }}" width="50" class="rounded">
-    </td>
-    <td>${{ number_format($product->price,2) }}</td>
-    <td>{{ $product->type }}</td>
-    <td>
-        <!-- Edit Button with data attributes -->
-        <button
-            type="button"
-            class="btn btn-info btn-sm rounded-pill btn-edit"
-            data-id="{{ $product->id }}"
-            data-name="{{ $product->name }}">
-            Edit
-        </button>
-    </td>
-    <td>
-        <!-- Delete Button with data attributes -->
-        <button
-            type="button"
-            class="btn btn-danger btn-sm rounded-pill btn-delete"
-            data-id="{{ $product->id }}"
-            data-name="{{ $product->name }}"
-            data-price="{{ number_format($product->price,2) }}">
-            Delete
-        </button>
-    </td>
-</tr>
-@endforeach
+                            <tr style="border-bottom:1px solid #5a3d30;">
+                                {{-- Sequential number instead of DB id --}}
+                                <th scope="row">{{ $counter }}</th>
 
+                                <td>{{ $product->name }}</td>
+                                <td>
+                                    <div style="display: flex; justify-content: center; align-items: center;">
+                                        <img
+                                            src="{{ asset('assets/images/'.$product->image) }}"
+                                            alt="{{ $product->name }}"
+                                            style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid #6b4c3b;"
+                                        >
+                                    </div>
+                                </td>
+                                <td>${{ number_format($product->price, 2) }}</td>
+                                <td>{{ $product->type }}</td>
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="btn btn-info btn-sm rounded-pill btn-edit"
+                                        data-id="{{ $product->id }}"
+                                        data-name="{{ $product->name }}"
+                                        data-price="{{ $product->price }}"
+                                        data-type="{{ $product->type }}">
+                                        Edit
+                                    </button>
+                                </td>
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="btn btn-danger btn-sm rounded-pill btn-delete"
+                                        data-id="{{ $product->id }}"
+                                        data-name="{{ $product->name }}"
+                                        data-price="{{ number_format($product->price, 2) }}">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                            @php $counter++; @endphp
+                            @endforeach
                         </tbody>
+
                     </table>
                 </div>
 
@@ -82,8 +96,21 @@
         </div>
     </div>
 </div>
+
+{{-- SweetAlert --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{{-- CSRF Setup for JS --}}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    });
+});
+</script>
+
+{{-- External JS File --}}
 <script src="{{ asset('assets/js/all-product.js') }}"></script>
-
-
 @endsection

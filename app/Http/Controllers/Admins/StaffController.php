@@ -112,7 +112,7 @@ public function staffCheckout(Request $request)
     }
     foreach ($product->rawMaterials as $raw) {
     $requiredQty = $raw->pivot->quantity_required * $item['quantity'];
-    \Log::info("Deducting {$requiredQty} from {$raw->name} (before: {$raw->quantity})");
+    Log::info("Deducting {$requiredQty} from {$raw->name} (before: {$raw->quantity})");
     $raw->decrement('quantity', $requiredQty);
 }
 

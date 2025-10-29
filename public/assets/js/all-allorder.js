@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
             input: 'select',
             inputOptions: {
                 'Pending': 'Pending',
-                'Delivered': 'Delivered',
+                'Paid': 'Paid',
                 'Cancelled': 'Cancelled'
             },
             inputValue: currentStatus,

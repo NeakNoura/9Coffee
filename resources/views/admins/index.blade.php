@@ -62,9 +62,9 @@
             <li>
                 <a href="{{ route('all.orders') }}">
                     <span class="icon">
-                        <ion-icon name="bar-chart-outline"></ion-icon>
+                        <ion-icon name="receipt-outline"></ion-icon>
                     </span>
-                    <span class="title">Report Sale</span>
+                    <span class="title">Report Order</span>
                 </a>
             </li>
                 <li>
@@ -78,7 +78,7 @@
             <span class="icon">
                 <ion-icon name="bar-chart-outline"></ion-icon>
             </span>
-            <span class="title">Sales Report</span>
+            <span class="title">Total Sales Report</span>
         </a>
     </li>
 
@@ -114,31 +114,6 @@
             </li>
         </ul>
     </div>
-
-
-
-            <!-- ========================= Main ==================== -->
-            {{-- <div class="main">
-                <div class="topbar">
-                    <div class="toggle">
-                        <ion-icon name="menu-outline"></ion-icon>
-                    </div>
-
-                    <div class="search">
-                        <label>
-                            <input type="text" placeholder="Search here">
-                            <ion-icon name="search-outline"></ion-icon>
-                        </label>
-                    </div>
-
-                    <div class="user">
-                        <img src="{{ asset('assets/images/IMG_8364.JPG') }}" alt="">
-
-                    </div>
-                </div> --}}
-
-                <!-- ======================= Cards ================== -->
-
     <div class="cardBox">
         <a href="{{ route('all.admins') }}" class="card" style="background-color:#6c5ce7; color:#fff;">
             <div>
@@ -218,14 +193,13 @@
                 <td>
                     <span class="badge
                         @if(strtolower($order->status)=='pending') bg-warning
-                        @elseif(strtolower($order->status)=='delivered') bg-success
                         @elseif(strtolower($order->status)=='cancelled') bg-danger
                         @else bg-secondary
                         @endif px-3 py-1 rounded-pill">
                         {{ $order->status }}
                     </span>
                 </td>
-                <td>{{ $order->created_at->format('d M Y H:i') }}</td> <!-- Added date -->
+                    <td>{{ $order->created_at->timezone('Asia/Phnom_Penh')->format('d M Y H:i') }}</td>
             </tr>
             @empty
             <tr>
