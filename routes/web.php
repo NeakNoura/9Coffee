@@ -1,15 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Products\ProductsController;
 use App\Http\Controllers\Admins\AdminsController;
 use App\Http\Controllers\Users\UsersController;
 use App\Http\Controllers\HomeController;
 use App\Exports\SalesReportExport;
+use App\Http\Models\Product\RawMaterial;
+use App\Http\Controllers\Admins\RawMaterialController;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Http\Controllers\Admins\AdminPaymentController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -118,8 +118,8 @@ Route::get('admin/stock', [AdminsController::class, 'viewRawMaterials'])
 
 
 
-Route::patch('/admin/raw-stock/update/{id}', [AdminsController::class, 'updateRawMaterial'])
-    ->name('admin.raw-material.update');
+Route::patch('raw-stock/update/{id}', [RawMaterialController::class, 'update'])->name('admin.raw-material.update');
+
 
     // Admin Reports & Analytics
     Route::get('admin/reports/sales', [AdminsController::class, 'salesReport'])->name('admin.sales.report');

@@ -14,7 +14,6 @@ class RawMaterialsSeeder extends Seeder
             ['name' => 'Milk', 'quantity' => 15, 'unit' => 'liters'],
             ['name' => 'Sugar', 'quantity' => 50, 'unit' => 'kg'],
         ];
-
         foreach ($materials as $material) {
     RawMaterial::updateOrCreate(
         ['name' => trim($material['name'])],
@@ -25,6 +24,5 @@ class RawMaterialsSeeder extends Seeder
         ]
     );
 }
-
-    }
+}
 }

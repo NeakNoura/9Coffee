@@ -9,6 +9,7 @@ use App\Models\Product\Order;
 use App\Models\Product\Receipt;
 use App\Models\Admin;
 use App\Models\RawMaterial;
+use Log;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -443,14 +444,15 @@ public function staffCheckout(Request $request)
 
     $ordersCreated = [];
 
-    foreach ($cart as $productId => $item) {
+    foreach ($cart as $key => $item) {
+        $parts = explode('_', $key);
+        $productId = $parts[0];
+        $size = $parts[1] ?? 'S';
+        $sugar = $parts[2] ?? '50';
+
         $product = Product::with('rawMaterials')->find($productId);
+        if (!$product) continue;
 
-        if (!$product || $product->quantity < $item['quantity']) {
-            continue; // skip if not enough product stock
-        }
-
-        // Check if raw materials are sufficient
         $canFulfill = true;
         foreach ($product->rawMaterials as $raw) {
             $requiredQty = $raw->pivot->quantity_required * $item['quantity'];
@@ -459,16 +461,15 @@ public function staffCheckout(Request $request)
                 break;
             }
         }
-        if (!$canFulfill) {
-            continue; // skip this product if raw materials insufficient
-        }
+        if (!$canFulfill) continue;
 
-        // Create the order
         $order = Order::create([
             'product_id' => $productId,
             'price' => $item['price'] * $item['quantity'],
             'quantity' => $item['quantity'],
-            'payment_status' => $paymentMethod === 'cash' ? 'Paid' : 'Paid',
+            'size' => $size,
+            'sugar' => $sugar,
+            'payment_status' => 'Paid',
             'status' => 'Paid',
             'first_name' => 'Staff',
             'last_name' => '',
@@ -481,31 +482,38 @@ public function staffCheckout(Request $request)
             'order_ref' => $orderRef,
         ]);
 
-        // Deduct product stock
-        $product->quantity -= $item['quantity'];
-        $product->save();
+        $product->decrement('quantity', $item['quantity']);
 
-        // Deduct raw materials stock
         foreach ($product->rawMaterials as $raw) {
-            $raw->quantity -= $raw->pivot->quantity_required * $item['quantity'];
-            $raw->save();
+            $requiredQty = $raw->pivot->quantity_required * $item['quantity'];
+            $raw->decrement('quantity', $requiredQty);
         }
 
         $ordersCreated[] = $order;
     }
+    foreach ($product->rawMaterials as $raw) {
+    $requiredQty = $raw->pivot->quantity_required * $item['quantity'];
+    \Log::info("Deducting {$requiredQty} from {$raw->name} (before: {$raw->quantity})");
+    $raw->decrement('quantity', $requiredQty);
+}
 
-    // Return response
-    if ($paymentMethod === 'cash') {
-        return response()->json([
-            'success' => true,
-            'message' => 'Cash payment completed!',
-            'orders' => $ordersCreated,
-        ]);
-    }
 
-    // QR Payment
-    $qrData = route('staff.qr-pay', ['order_ref' => $orderRef]);
-    return view('admins.staff-qr', compact('qrData', 'orderRef'));
+    // Return updated raw material stock
+    $updatedRawMaterials = RawMaterial::all()->map(function($raw){
+        return [
+            'id' => $raw->id,
+            'name' => $raw->name,
+            'quantity' => $raw->quantity,
+            'unit' => $raw->unit,
+        ];
+    });
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Checkout completed!',
+        'orders' => $ordersCreated,
+        'updated_raw_materials' => $updatedRawMaterials,
+    ]);
 }
 
 

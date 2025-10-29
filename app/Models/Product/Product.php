@@ -11,13 +11,15 @@ class Product extends Model
     use HasFactory;
     protected $table = "products";
 
-    protected $fillable = [
-        "name",
-        "image",
-        "price",
-        "description",
-        "type",
-    ];
+  protected $fillable = [
+    "name",
+    "image",
+    "price",
+    "description",
+    "type",
+    "quantity", // <- add this
+];
+
      // Relationship to raw materials
     public function rawMaterials()
 {

@@ -244,9 +244,7 @@
 </table>
 
     </div>
-
-    <!-- ================= Analytics Charts ================= -->
-    <!-- ================= Analytics Charts ================= -->
+        <!-- ================= Analytics Charts ================= -->
         <div class="analytics col-12">
             <div class="card">
                 <div class="card-header">

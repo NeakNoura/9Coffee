@@ -39,7 +39,7 @@
                     confirmButtonColor: '#b7410e',
                     cancelButtonColor: '#6c757d',
                     confirmButtonText: 'Yes, delete it!',
-                    background: '#3e2f2f',
+                    background: '#201d1dff',
                     color: '#fff'
                 }).then((result) => {
                     if (result.isConfirmed) {

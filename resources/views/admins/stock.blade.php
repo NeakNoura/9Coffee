@@ -8,14 +8,6 @@
         </div>
         <div class="card-body">
 
-            {{-- Flash Messages --}}
-            @if(Session::has('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ Session::get('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-
             {{-- Stock Table --}}
             <div class="table-responsive">
                 <table class="table align-middle mb-0" style="color:#f5f5f5; min-width:100%; border:1px solid #6b4c3b;">
@@ -42,12 +34,15 @@
         </span>
     </td>
     <td>
-        <form action="{{ route('admin.raw-material.update', $material->id) }}" method="POST">
-            @csrf
-            @method('PUT')
-            <input type="number" name="quantity" value="{{ $material->quantity }}" min="0" class="form-control" style="width:80px; display:inline-block;">
-            <button type="submit" class="btn btn-sm btn-primary">Update</button>
-        </form>
+ <form action="{{ route('admin.raw-material.update', $material->id) }}" method="POST">
+    @csrf
+    @method('PATCH')
+    <input type="number" name="quantity" value="{{ $material->quantity }}" min="0" class="form-control" style="width:80px; display:inline-block;">
+    <button type="submit" class="btn btn-sm btn-primary">Update</button>
+</form>
+
+
+
     </td>
 </tr>
 @endforeach
@@ -64,4 +59,16 @@
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@if(Session::has('success'))
+<script>
+Swal.fire({
+  icon: 'success',
+  title: 'Success!',
+  text: '{{ Session::get('success') }}',
+  confirmButtonColor: '#db770c'
+});
+</script>
+@endif
 @endsection
