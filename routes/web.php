@@ -1,8 +1,12 @@
 
 <?php
-
 use Illuminate\Support\Facades\Route;
+use BaconQrCode\Renderer\Image\RendererStyle\RendererStyle;
+use BaconQrCode\Renderer\Image\GdImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Writer;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Products\ProductsController;
 use App\Http\Controllers\Admins\AdminsController;
 use App\Http\Controllers\Users\UsersController;
@@ -19,6 +23,7 @@ use App\Http\Models\Product\RawMaterial;
 use App\Http\Controllers\Admins\RawMaterialController;
 use App\Http\Controllers\Admins\ReportController;
 use App\Http\Controllers\Admins\StaffController;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 /*
 |--------------------------------------------------------------------------

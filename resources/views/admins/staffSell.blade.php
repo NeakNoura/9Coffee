@@ -78,13 +78,15 @@
         </div>
 
         <!-- Payment Method -->
-        <div class="mt-3">
-            <label for="payment_method" class="form-label">Payment Method</label>
-            <select name="payment_method" id="payment_method" class="form-select" required>
-                <option value="cash" selected>Cash</option>
-                <option value="qr">QR Code</option>
-            </select>
-        </div>
+      <div class="mt-3">
+    <label for="payment_method" class="form-label">Payment Method</label>
+    <div class="custom-select-wrapper">
+        <select name="payment_method" id="payment_method" required>
+            <option value="cash" selected>Cash</option>
+            <option value="qr">QR Code</option>
+        </select>
+    </div>
+</div>
 
         <!-- Checkout -->
         <form id="checkout-form" action="{{ route('staff.checkout') }}" method="POST" class="mt-3">

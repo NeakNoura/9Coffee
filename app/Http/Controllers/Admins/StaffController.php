@@ -84,8 +84,9 @@ public function staffCheckout(Request $request)
         if (!$canFulfill) continue;
 
         // Determine payment status
-        $paymentStatus = ($paymentMethod === 'cash') ? 'Paid' : 'Pending';
-        $orderStatus = ($paymentMethod === 'cash') ? 'Paid' : 'Pending';
+        $paymentStatus = ($paymentMethod === 'cash') ? 'Paid' : 'Paid';
+        $orderStatus = ($paymentMethod === 'cash') ? 'Paid' : 'Paid';
+
 
         $order = Order::create([
             'product_id' => $productId,
@@ -105,6 +106,11 @@ public function staffCheckout(Request $request)
             'payment_method' => $paymentMethod,
             'order_ref' => $orderRef,
         ]);
+     if ($paymentMethod === 'qr') {
+    $qrUrl = asset('assets/images/QRPAY.jpg');
+}
+
+
 
         // Deduct product and raw materials only if cash (or after QR confirmed)
         if($paymentMethod === 'cash'){
@@ -117,13 +123,15 @@ public function staffCheckout(Request $request)
 
         $ordersCreated[] = $order;
     }
+return response()->json([
+    'success' => true,
+    'message' => ($paymentMethod === 'cash') ? 'Checkout completed with cash!' : 'QR payment initiated!',
+    'orders' => $ordersCreated,
+    'payment_method' => $paymentMethod,
+    'qr_url' => $qrUrl ?? null
+]);
 
-    return response()->json([
-        'success' => true,
-        'message' => ($paymentMethod === 'cash') ? 'Checkout completed with cash!' : 'QR payment initiated!',
-        'orders' => $ordersCreated,
-        'payment_method' => $paymentMethod
-    ]);
+
 }
 
 }

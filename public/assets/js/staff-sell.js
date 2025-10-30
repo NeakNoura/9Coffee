@@ -144,21 +144,37 @@ document.addEventListener('DOMContentLoaded', function() {
     const text = await res.text();
     try {
         const data = JSON.parse(text);
-        if(data.success){
-            if(data.payment_method === 'qr'){
-                Swal.fire({
-                    title: 'Scan QR to pay',
-                    html: `<p>Total: <strong>$${total.toFixed(2)}</strong></p>
-                           <img src="https://www.paypal.com/sdk/js?client-id=AWz8KxTfgSZkfv_--1V7bfT05BQA20tPW1n2W7uacbNF1PQkzm5f1UFELl0P9g-mY_Z487fNBXT47xUq&currency=USD" style="width:200px;">`,
-                    showConfirmButton: false,
-                    timer: 15000
-                });
-            } else {
-                showToast(data.message, 'success');
-                cart = {};
-                renderCart();
+       if(data.success){
+    if(data.payment_method === 'qr'){
+        let timeLeft = 20; // 20 seconds countdown
+
+        Swal.fire({
+            title: 'Scan QR to pay',
+            html: `<p>Total: <strong>$${total.toFixed(2)}</strong></p>
+                   <p id="qr-timer">Time left: <strong>${timeLeft}s</strong></p>
+                   <img src="${data.qr_url}" alt="QR Code" style="width:300px; height:300px;">`,
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            didOpen: () => {
+                const timerEl = Swal.getHtmlContainer().querySelector('#qr-timer');
+                const interval = setInterval(() => {
+                    timeLeft--;
+                    timerEl.innerHTML = `Time left: <strong>${timeLeft}s</strong>`;
+                    if(timeLeft <= 0){
+                        clearInterval(interval);
+                        Swal.close();
+                        showToast('QR code expired!', 'error');
+                    }
+                }, 1000);
             }
-        } else {
+        });
+    } else {
+        showToast(data.message, 'success');
+        cart = {};
+        renderCart();
+    }
+}
+else {
             showToast(data.message || 'Error occurred', 'error');
         }
     } catch(e) {

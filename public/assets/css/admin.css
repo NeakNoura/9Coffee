@@ -177,6 +177,54 @@ html, body {
         max-width: 90%;
     }
 }
+   /* Wrapper to control dropdown width */
+.custom-select-wrapper {
+    width: 100%;
+    max-width: 400px; /* optional max width */
+    margin-top: 5px;
+}
+
+/* Style the select like a big button */
+.custom-select-wrapper {
+    width: 100%;
+    max-width: 250px; /* smaller, balanced width */
+    margin-top: 5px;
+    position: relative;
+}
+
+/* Medium-sized, rounded select */
+.custom-select-wrapper select {
+    width: 100%;
+    padding: 8px 14px;       /* medium padding */
+    font-size: 1rem;         /* medium text */
+    border-radius: 8px;      /* slightly rounded */
+    border: 1.5px solid #3e2f2f;
+    background-color: #f5f5f5;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Custom arrow */
+.custom-select-wrapper::after {
+    content: "▼";
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 0.8rem;
+    color: #3e2f2f;
+}
+
+/* Focus effect */
+.custom-select-wrapper select:focus {
+    outline: none;
+    border-color: #8c6e6e;
+    box-shadow: 0 0 4px rgba(142,110,110,0.5);
+}
 .navigation ul li a {
   display: flex;
   align-items: center;
