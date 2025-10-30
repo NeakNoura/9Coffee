@@ -42,10 +42,19 @@ button, input, select, textarea, a, td, th, span, p, li {
   height: 100%;
   background: #3e2f2f;
   border-radius: 0 20px 20px 0;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.2);
   overflow-y: auto;
   transition: 0.5s;
   padding-top: 20px;
+}
+
+.navigation ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navigation ul li {
+  border-bottom: 1px solid #db770c; /* clean, visible border */
 }
 
 .status-select {
@@ -168,26 +177,36 @@ html, body {
         max-width: 90%;
     }
 }
-.navigation ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.navigation ul li a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  color: #f5f5f5;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background 0.2s;
 }
 
-.navigation ul li {
-    border-bottom: 2px solid #db770c; /* simple bold bottom border */
+.navigation ul li a span.icon {
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+.navigation ul li a:hover,
+.navigation ul li.active a {
+  background-color: #5a3d30; /* highlight selected or hover */
+  border-left: 4px solid #db770c; /* optional accent for selected */
+}
+
+/* Remove shadow effect from items */
+.navigation ul li a::after {
+  display: none;
 }
 
 .navigation ul li:last-child {
     border-bottom: none; /* remove border for the last item */
 }
-.navigation ul li a {
-    display: block;
-    padding: 12px 20px;
-    color: #f5f5f5;
-    font-weight: bold;
-    text-decoration: none;
-}
+
 
 .navigation ul li:hover {
   background: rgba(255, 255, 255, 0.08);
@@ -284,6 +303,104 @@ html, body {
     margin-left: 300px; /* same as sidebar width */
     padding: 20px;
     transition: margin-left 0.5s; /* for collapsible sidebar later */
+}
+.recent-orders-table thead {
+    background-color: #6c5ce7; /* match sidebar/dashboard color */
+    color: #fff;
+}
+
+.recent-orders-table tbody tr {
+    background-color: #fff; /* white rows */
+    transition: background-color 0.3s;
+}
+
+.recent-orders-table tbody tr:hover {
+    background-color: #dfe6e9; /* light hover effect */
+}
+
+/* Card Styling */
+.form-card {
+    background: linear-gradient(135deg, #3e2f2f, #5a3d30);
+    color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.form-card-header {
+    background: linear-gradient(90deg, #db770c, #ff9a3c);
+    color: #fff;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    border-bottom: none;
+    border-radius: 15px 15px 0 0;
+}
+
+/* Form Inputs */
+.form-input {
+    border-radius: 12px;
+    padding: 12px 18px;
+    background-color: #5c4033;
+    color: #fff;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    background-color: #704c35;
+    box-shadow: 0 0 8px rgba(219, 119, 12, 0.8);
+    color: #fff;
+}
+
+/* Placeholder color */
+.form-input::placeholder {
+    color: #d9c4b3;
+    opacity: 1;
+}
+
+/* Buttons */
+.btn-submit {
+    background: linear-gradient(90deg, #ff7e5f, #feb47b);
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 50px;
+    padding: 12px 0;
+    transition: all 0.3s ease;
+}
+.btn-submit:hover {
+    background: linear-gradient(90deg, #feb47b, #ff7e5f);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(255, 126, 95, 0.5);
+}
+
+.btn-cancel {
+    background: #444;
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 50px;
+    padding: 12px 0;
+    transition: all 0.3s ease;
+}
+.btn-cancel:hover {
+    background: #666;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+}
+
+/* Label Styling */
+.form-label {
+    color: #ffe5b4;
+    font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .btn-submit, .btn-cancel {
+        width: 100% !important;
+        margin-bottom: 10px;
+    }
 }
 
 /* Dashboard Cards */

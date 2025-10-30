@@ -12,11 +12,11 @@
     @endif
 
     {{-- Product Form --}}
-    <div class="card shadow-sm border-0 rounded-4 mb-4" style="background-color: #3e2f2f; color:#f5f5f5;">
-        <div class="card-header" style="background-color: #db770c; color:#fff;">
+    <div class="card shadow-lg border-0 rounded-4 mb-5 form-card">
+        <div class="card-header py-3 form-card-header">
             <h4 class="mb-0">{{ isset($product) ? 'Edit Product' : 'Create Product' }}</h4>
         </div>
-        <div class="card-body">
+        <div class="card-body p-4">
             <form action="{{ isset($product) ? route('update.products', $product->id) : route('store.products') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @if(isset($product))
@@ -40,7 +40,7 @@
 
                 <div class="mb-3">
                     <label class="form-label fw-bold">Description</label>
-                    <textarea name="description" rows="3" class="form-control form-input">{{ $product->description ?? old('description') }}</textarea>
+                    <textarea name="description" rows="4" class="form-control form-input">{{ $product->description ?? old('description') }}</textarea>
                 </div>
 
                 <div class="mb-3">
@@ -64,56 +64,93 @@
             </form>
         </div>
     </div>
-
 </div>
 
 {{-- Custom CSS --}}
 <style>
-    .form-input {
-        border-radius: 12px;
-        padding: 12px 18px;
-        background-color: #5a3d30;
-        color: #fff;
-        border: none;
-        transition: all 0.3s ease;
-    }
+/* Card Styling */
+.form-card {
+    background: linear-gradient(135deg, #3e2f2f, #5a3d30);
+    color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
 
-    .form-input:focus {
-        outline: none;
-        background-color: #704c35;
-        box-shadow: 0 0 5px rgba(219, 119, 12, 0.8);
-        color: #fff;
-    }
+.form-card-header {
+    background: linear-gradient(90deg, #db770c, #ff9a3c);
+    color: #fff;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    border-bottom: none;
+    border-radius: 15px 15px 0 0;
+}
 
-    /* Modern Bold Buttons */
-    .btn-submit {
-        background: linear-gradient(90deg, #ff7e5f, #feb47b);
-        color: #fff;
-        font-weight: 700;
-        text-transform: uppercase;
-        border-radius: 50px;
-        padding: 12px;
-        transition: all 0.3s ease;
-    }
-    .btn-submit:hover {
-        background: linear-gradient(90deg, #feb47b, #ff7e5f);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4);
-    }
+/* Form Inputs */
+.form-input {
+    border-radius: 12px;
+    padding: 12px 18px;
+    background-color: #5c4033;
+    color: #fff;
+    border: none;
+    transition: all 0.3s ease;
+}
 
-    .btn-cancel {
-        background: #444;
-        color: #fff;
-        font-weight: 700;
-        text-transform: uppercase;
-        border-radius: 50px;
-        padding: 12px;
-        transition: all 0.3s ease;
+.form-input:focus {
+    outline: none;
+    background-color: #704c35;
+    box-shadow: 0 0 8px rgba(219, 119, 12, 0.8);
+    color: #fff;
+}
+
+/* Placeholder color */
+.form-input::placeholder {
+    color: #d9c4b3;
+    opacity: 1;
+}
+
+/* Buttons */
+.btn-submit {
+    background: linear-gradient(90deg, #ff7e5f, #feb47b);
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 50px;
+    padding: 12px 0;
+    transition: all 0.3s ease;
+}
+.btn-submit:hover {
+    background: linear-gradient(90deg, #feb47b, #ff7e5f);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(255, 126, 95, 0.5);
+}
+
+.btn-cancel {
+    background: #444;
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 50px;
+    padding: 12px 0;
+    transition: all 0.3s ease;
+}
+.btn-cancel:hover {
+    background: #666;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+}
+
+/* Label Styling */
+.form-label {
+    color: #ffe5b4;
+    font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .btn-submit, .btn-cancel {
+        width: 100% !important;
+        margin-bottom: 10px;
     }
-    .btn-cancel:hover {
-        background: #666;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-    }
+}
 </style>
 @endsection

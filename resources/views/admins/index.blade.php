@@ -37,7 +37,7 @@
             <span class="icon">
                 <ion-icon name="layers-outline"></ion-icon> <!-- stacked boxes, looks like stock -->
             </span>
-            <span class="title">Add Item</span>
+            <span class="title">Add Product</span>
         </a>
     </li>
 
@@ -170,9 +170,9 @@
                 <div class="details">
                     <div class="recentOrders">
             <div class="cardHeader">
-                <h2>Recent Orders</h2>
-                <a href="{{ route('all.orders') }}" class="btn">View All</a>
-            </div>
+        <h2>Recent Orders</h2>
+        <a href="{{ route('all.orders') }}" class="btn">View All</a>
+    </div>
 
         <table>
         <thead>

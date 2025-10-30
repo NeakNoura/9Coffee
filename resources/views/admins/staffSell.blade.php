@@ -24,7 +24,10 @@
                          style="height:120px; object-fit:cover; border-radius:12px;">
 
                     <div class="fw-bold">{{ $product->name }}</div>
-                    <div>${{ $product->price }}</div>
+                    <div class="fw-bold product-price" data-base-price="{{ $product->price }}">
+                        ${{ $product->price }}
+                    </div>
+
 
                     <!-- Size -->
                     <div class="btn-group btn-group-sm mt-2 size-buttons" role="group">

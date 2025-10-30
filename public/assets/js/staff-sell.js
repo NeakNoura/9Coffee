@@ -1,25 +1,36 @@
 document.addEventListener('DOMContentLoaded', function() {
     let cart = {};
 
-    // Toast helper
+    // Size price mapping
+    const sizePriceMap = { S: 2, M: 3, L: 4 }; // Adjust as needed
+
+    // Toast helper (middle screen)
     function showToast(message, icon='success'){
         Swal.fire({
-            toast:true,
-            position:'top-end',
-            icon,
+            position: 'center',
+            icon: icon,
             title: message,
-            showConfirmButton:false,
-            timer:1500,
-            timerProgressBar:true
+            showConfirmButton: false,
+            timer: 1200,
+            timerProgressBar: true
         });
     }
 
-    // Select size/sugar
+    // Select size/sugar buttons
     document.querySelectorAll('.size-buttons, .sugar-buttons').forEach(group=>{
         group.addEventListener('click', e=>{
             if(e.target.classList.contains('size-btn') || e.target.classList.contains('sugar-btn')){
                 group.querySelectorAll('button').forEach(btn=>btn.classList.remove('active'));
                 e.target.classList.add('active');
+
+                // Update price dynamically
+                if(e.target.classList.contains('size-btn')){
+                    const card = group.closest('.product-card');
+                    const basePrice = parseFloat(card.dataset.price);
+                    const size = e.target.dataset.size;
+                    const newPrice = sizePriceMap[size] || basePrice;
+                    card.querySelector('.product-price').textContent = `$${newPrice}`;
+                }
             }
         });
     });
@@ -30,7 +41,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const card = this.closest('.product-card');
             const id = card.dataset.id;
             const name = card.dataset.name;
-            const price = parseFloat(card.dataset.price);
 
             const sizeBtn = card.querySelector('.size-btn.active');
             const sugarBtn = card.querySelector('.sugar-btn.active');
@@ -41,13 +51,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const size = sizeBtn.dataset.size;
             const sugar = sugarBtn.dataset.sugar;
+            const price = sizePriceMap[size] || parseFloat(card.dataset.price);
             const key = `${id}_${size}_${sugar}`;
 
             if(cart[key]) cart[key].quantity++;
             else cart[key] = {id, name, size, sugar, price, quantity:1};
 
             renderCart();
-            showToast(`${name} (${size}, ${sugar}%) added!`);
+            showToast(`${name} (${size}, ${sugar}%) added!`, 'success');
         });
     });
 
@@ -62,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if(cart[key]){
                 cart[key].quantity--;
-                if(cart[key].quantity<=0) delete cart[key];
+                if(cart[key].quantity <= 0) delete cart[key];
             }
 
             renderCart();
@@ -70,10 +81,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Render cart
+    // Render cart with total
     function renderCart(){
         const tbody = document.querySelector('#cart-table tbody');
         tbody.innerHTML = '';
+        let total = 0;
+
         Object.values(cart).forEach(item=>{
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -83,14 +96,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${item.quantity}</td>
                 <td>$${(item.price*item.quantity).toFixed(2)}</td>`;
             tbody.appendChild(row);
+
+            total += item.price * item.quantity;
         });
+
+        // Add total row
+        let totalRow = document.createElement('tr');
+        totalRow.innerHTML = `<td colspan="4" class="text-end fw-bold">Total:</td>
+                              <td class="fw-bold">$${total.toFixed(2)}</td>`;
+        tbody.appendChild(totalRow);
     }
 
-    // Checkout button
+    // Checkout
     document.querySelector('#checkout').addEventListener('click', function(e){
         e.preventDefault();
 
-        if(Object.keys(cart).length===0){
+        if(Object.keys(cart).length === 0){
             showToast('Cart is empty!', 'error');
             return;
         }
@@ -120,25 +141,32 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: formData
                 })
                 .then(async res => {
-                    const text = await res.text();
-                    try {
-                        const data = JSON.parse(text);
-                        if(data.success){
-                            showToast(data.message, 'success');
-                            cart = {};
-                            renderCart();
-                        } else {
-                            showToast(data.message || 'Error occurred', 'error');
-                        }
-                    } catch(e) {
-                        console.error('Server Response:', text);
-                        showToast('Server error!', 'error');
-                    }
-                })
-                .catch(err=>{
-                    console.error('Checkout failed:', err);
-                    showToast('Server error!', 'error');
+    const text = await res.text();
+    try {
+        const data = JSON.parse(text);
+        if(data.success){
+            if(data.payment_method === 'qr'){
+                Swal.fire({
+                    title: 'Scan QR to pay',
+                    html: `<p>Total: <strong>$${total.toFixed(2)}</strong></p>
+                           <img src="https://www.paypal.com/sdk/js?client-id=AWz8KxTfgSZkfv_--1V7bfT05BQA20tPW1n2W7uacbNF1PQkzm5f1UFELl0P9g-mY_Z487fNBXT47xUq&currency=USD" style="width:200px;">`,
+                    showConfirmButton: false,
+                    timer: 15000
                 });
+            } else {
+                showToast(data.message, 'success');
+                cart = {};
+                renderCart();
+            }
+        } else {
+            showToast(data.message || 'Error occurred', 'error');
+        }
+    } catch(e) {
+        console.error('Server Response:', text);
+        showToast('Server error!', 'error');
+    }
+})
+
             }
         });
     });
