@@ -144,44 +144,49 @@ document.addEventListener('DOMContentLoaded', function() {
     const text = await res.text();
     try {
         const data = JSON.parse(text);
-       if(data.success){
-    if(data.payment_method === 'qr'){
-        let timeLeft = 20; // 20 seconds countdown
-
-        Swal.fire({
-            title: 'Scan QR to pay',
-            html: `<p>Total: <strong>$${total.toFixed(2)}</strong></p>
-                   <p id="qr-timer">Time left: <strong>${timeLeft}s</strong></p>
-                   <img src="${data.qr_url}" alt="QR Code" style="width:300px; height:300px;">`,
-            showConfirmButton: false,
-            allowOutsideClick: false,
-            didOpen: () => {
-                const timerEl = Swal.getHtmlContainer().querySelector('#qr-timer');
-                const interval = setInterval(() => {
-                    timeLeft--;
-                    timerEl.innerHTML = `Time left: <strong>${timeLeft}s</strong>`;
-                    if(timeLeft <= 0){
-                        clearInterval(interval);
-                        Swal.close();
-                        showToast('QR code expired!', 'error');
+        if (data.success) {
+            if (data.payment_method === 'qr') {
+                Swal.fire({
+                    title: 'Scan QR to Pay',
+                    html: `
+                        <p>Total: <strong>$${total.toFixed(2)}</strong></p>
+                        <img src="${data.qr_url}" alt="QR Code" style="width:300px; height:300px;">
+                        <div style="margin-top:20px;">
+                            <button id="btn-paid" class="swal2-confirm swal2-styled" style="background:#28a745;">Customer Paid</button>
+                            <button id="btn-cancel" class="swal2-cancel swal2-styled" style="background:#dc3545;">Cancel Payment</button>
+                        </div>
+                    `,
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        const paidBtn = Swal.getPopup().querySelector('#btn-paid');
+                        const cancelBtn = Swal.getPopup().querySelector('#btn-cancel');
+                        paidBtn.addEventListener('click', () => {
+                            Swal.close();
+                            showToast('Payment confirmed!', 'success');
+                            cart = {};
+                            renderCart();
+                        });
+                        cancelBtn.addEventListener('click', () => {
+                            Swal.close();
+                            showToast('Payment cancelled!', 'info');
+                        });
                     }
-                }, 1000);
+                });
+            } else {
+                showToast(data.message, 'success');
+                cart = {};
+                renderCart();
             }
-        });
-    } else {
-        showToast(data.message, 'success');
-        cart = {};
-        renderCart();
-    }
-}
-else {
+        } else {
             showToast(data.message || 'Error occurred', 'error');
         }
-    } catch(e) {
+    } catch (e) {
         console.error('Server Response:', text);
         showToast('Server error!', 'error');
     }
-})
+});
+
 
             }
         });
