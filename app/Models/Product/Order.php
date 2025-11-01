@@ -10,6 +10,7 @@ class Order extends Model
     use HasFactory;
 
     protected $table = "orders";
+// in App\Models\Product\Order.php
 protected $fillable = [
     "first_name",
     "last_name",
@@ -25,6 +26,9 @@ protected $fillable = [
     "product_id",
     "payment_status",
     "payment_method",
+    "quantity",
+    "size",
+    "sugar",
 ];
 
 

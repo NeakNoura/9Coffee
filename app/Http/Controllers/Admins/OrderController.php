@@ -52,7 +52,7 @@ class OrderController extends Controller
 
         public function DeleteAllOrders()
         {
-            \App\Models\Product\Order::query()->delete();
+           Order::query()->delete();
 
             return Redirect::route('all.orders')->with(['delete' => "All orders deleted successfully"]);
         }
@@ -66,28 +66,26 @@ class OrderController extends Controller
       }
 public function orderProduct(Request $request)
 {
-    $product = Product::findOrFail($request->product_id);
-    $quantity = $request->quantity;
+    // OrderController::orderProduct
+$product = Product::findOrFail($request->product_id);
+$quantity = $request->quantity;
 
-    // Check if stock is enough
-    foreach ($product->rawMaterials as $material) {
-        if ($material->quantity < ($material->pivot->quantity_required * $quantity)) {
-            return back()->with('error', $material->name . ' is not enough!');
-        }
+// check stock
+foreach ($product->rawMaterials as $raw) {
+    if ($raw->quantity < $raw->pivot->quantity_required * $quantity) {
+        return back()->with('error', $raw->name . ' is not enough!');
     }
+}
 
-    // Deduct raw materials
-    foreach ($product->rawMaterials as $material) {
-        $material->quantity -= $material->pivot->quantity_required * $quantity;
-        $material->save();
-    }
+// Deduct ingredients
+$product->deductIngredients($quantity);
 
     // Create order
     Order::create([
         'product_id' => $product->id,
         'quantity' => $quantity,
         'price' => $product->price * $quantity,
-        'status' => 'Pending'
+        'status' => 'Paid Successfully',
     ]);
 
     return back()->with('success', 'Order placed and stock updated!');

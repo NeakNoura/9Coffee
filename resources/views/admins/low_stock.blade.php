@@ -31,29 +31,95 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @php $counter = 1; @endphp
-                        @forelse ($lowStockProducts as $product)
-                            <tr>
-                                <td class="fw-semibold text-dark">{{ $counter }}</td>
-                                <td class="fw-semibold text-dark">{{ $product->name }}</td>
-                                <td>
-                                    <span class="badge rounded-pill bg-danger px-3 py-2">
-                                        {{ $product->quantity }}
-                                    </span>
-                                </td>
-                            </tr>
-                            @php $counter++; @endphp
-                        @empty
-                            <tr>
-                                <td colspan="3" class="text-muted py-4">
-                                    ✅ All products are well stocked 🎉
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
+@php $counter = 1; @endphp
+@forelse ($lowStockProducts as $product)
+<tr>
+    <td class="fw-semibold text-dark">{{ $counter }}</td>
+    <td class="fw-semibold text-dark">{{ $product->name }}</td>
+    <td>
+        <span class="badge rounded-pill bg-danger px-3 py-2" id="qty-{{ $product->id }}">
+            {{ $product->quantity }}
+        </span>
+        <button
+            class="btn btn-sm btn-outline-success ms-2 btn-add-quantity"
+            data-id="{{ $product->id }}"
+            data-name="{{ $product->name }}">
+            + Add
+        </button>
+    </td>
+</tr>
+@php $counter++; @endphp
+@empty
+<tr>
+    <td colspan="3" class="text-muted py-4">
+        ✅ All products are well stocked 🎉
+    </td>
+</tr>
+@endforelse
+</tbody>
+
                 </table>
             </div>
         </div>
     </div>
 </div>
+<head>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    document.querySelector('table tbody').addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-add-quantity');
+        if (!btn) return;
+
+        const productId = btn.dataset.id;
+        const productName = btn.dataset.name;
+
+        Swal.fire({
+            title: `Add Quantity to ${productName}`,
+            input: 'number',
+            inputAttributes: { min: 1 },
+            inputPlaceholder: 'Enter quantity to add',
+            showCancelButton: true,
+            confirmButtonText: 'Add',
+            cancelButtonText: 'Cancel',
+            background: '#f8f9fa',
+            color: '#000'
+        }).then((result) => {
+            if(result.isConfirmed){
+                const qtyToAdd = parseInt(result.value);
+                if(isNaN(qtyToAdd) || qtyToAdd <= 0){
+                    Swal.fire('Error', 'Please enter a valid quantity', 'error');
+                    return;
+                }
+
+                fetch(`/admin/products/${productId}/add-quantity`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ quantity: qtyToAdd })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success){
+                        Swal.fire('Added!', data.message, 'success');
+                        document.getElementById(`qty-${productId}`).textContent = data.new_quantity;
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                    }
+                })
+                .catch(err => Swal.fire('Error', 'Something went wrong', 'error'));
+            }
+        });
+    });
+});
+
+
+</script>
 @endsection

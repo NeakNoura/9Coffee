@@ -52,6 +52,10 @@
                         <option value="others" {{ (isset($product) && $product->type=='others') ? 'selected' : '' }}>Others</option>
                     </select>
                 </div>
+<div class="mb-3">
+    <label class="form-label fw-bold">Quantity</label>
+    <input type="number" name="quantity" class="form-control form-input" value="{{ $product->quantity ?? old('quantity') }}" min="0" required>
+</div>
 
                 <div class="d-flex justify-content-between mt-4">
                     <button type="submit" class="btn btn-submit w-50 me-2">

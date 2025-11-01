@@ -8,6 +8,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+
+
 }
 
 :root {
@@ -52,7 +54,23 @@ button, input, select, textarea, a, td, th, span, p, li {
   margin: 0;
   padding: 0;
 }
+ .btn-cafe {
+    background-color: #db770c;  /* caramel orange */
+    color: #fff !important;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+    display: inline-block;
+}
 
+.btn-cafe:hover {
+    background-color: #b95f05;  /* darker caramel */
+    color: #fff !important;
+    transform: translateY(-1px);
+}
 .navigation ul li {
   border-bottom: 1px solid #db770c; /* clean, visible border */
 }
@@ -318,7 +336,8 @@ html, body {
 
     tbody td {
         padding: 10px;
-        color: #fff;
+        color:#fff;
+        background-color: #4b3a3a;
     }
 
     tbody tr:nth-child(even) {
@@ -713,6 +732,7 @@ html, body {
   padding: 20px;
   box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
   border-radius: 20px;
+  background-color: #b1b0a3;
 }
 
 .details .cardHeader {

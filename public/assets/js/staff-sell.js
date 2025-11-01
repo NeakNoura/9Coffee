@@ -1,14 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
+    const staffSellSection = document.querySelector('.staff-sell-section');
+    if (!staffSellSection) return;
+
     let cart = {};
+    const sizePriceMap = { S: 2, M: 3, L: 4 }; // optional, adjust per your pricing
 
-    // Size price mapping
-    const sizePriceMap = { S: 2, M: 3, L: 4 }; // Adjust as needed
-
-    // Toast helper (middle screen)
     function showToast(message, icon='success'){
         Swal.fire({
             position: 'center',
-            icon: icon,
+            icon,
             title: message,
             showConfirmButton: false,
             timer: 1200,
@@ -16,36 +16,78 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Select size/sugar buttons
-    document.querySelectorAll('.size-buttons, .sugar-buttons').forEach(group=>{
-        group.addEventListener('click', e=>{
-            if(e.target.classList.contains('size-btn') || e.target.classList.contains('sugar-btn')){
-                group.querySelectorAll('button').forEach(btn=>btn.classList.remove('active'));
-                e.target.classList.add('active');
+    // ===== Event Delegation =====
+    staffSellSection.addEventListener('click', function(e){
+        const target = e.target;
 
-                // Update price dynamically
-                if(e.target.classList.contains('size-btn')){
-                    const card = group.closest('.product-card');
-                    const basePrice = parseFloat(card.dataset.price);
-                    const size = e.target.dataset.size;
-                    const newPrice = sizePriceMap[size] || basePrice;
-                    card.querySelector('.product-price').textContent = `$${newPrice}`;
+        // ----- Size / Sugar Selection -----
+        if(target.classList.contains('size-btn') || target.classList.contains('sugar-btn')){
+            const group = target.closest('.btn-group');
+            group.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+            target.classList.add('active');
+
+            if(target.classList.contains('size-btn')){
+                const card = target.closest('.product-card');
+                const basePrice = parseFloat(card.dataset.price);
+                const size = target.dataset.size;
+                const newPrice = sizePriceMap[size] || basePrice;
+                card.querySelector('.product-price').textContent = `$${newPrice.toFixed(2)}`;
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function(){
+    const toggleBtn = document.querySelector('#toggle-stock');
+    const panelBody = document.querySelector('#stock-panel .card-body');
+
+    // Show/Hide stock panel
+    toggleBtn.addEventListener('click', () => {
+        panelBody.style.display = panelBody.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Update stock button
+    document.querySelectorAll('.btn-update-stock').forEach(btn => {
+        btn.addEventListener('click', async function(){
+            const row = btn.closest('tr');
+            const productId = row.dataset.id;
+            const newStock = row.querySelector('.stock-input').value;
+
+            try {
+                const res = await fetch(`/admin/product/${productId}/update-stock`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ quantity: newStock })
+                });
+
+                const data = await res.json();
+                if(data.success){
+                    row.querySelector('.product-stock').textContent = newStock;
+                    Swal.fire({icon:'success', title:'Stock updated!', timer:1000, showConfirmButton:false});
+                } else {
+                    Swal.fire({icon:'error', title:data.message || 'Update failed', timer:1500, showConfirmButton:false});
                 }
+            } catch(err){
+                console.error(err);
+                Swal.fire({icon:'error', title:'Server error!', timer:1500, showConfirmButton:false});
             }
         });
     });
+});
 
-    // Add to cart
-    document.querySelectorAll('.btn-add-to-cart').forEach(btn=>{
-        btn.addEventListener('click', function(){
-            const card = this.closest('.product-card');
+
+        // ----- Add to Cart -----
+        const addBtn = target.closest('.btn-add-to-cart');
+        if(addBtn){
+            const card = addBtn.closest('.product-card');
             const id = card.dataset.id;
             const name = card.dataset.name;
+            const baseStock = parseInt(card.dataset.quantity) || 0;
 
             const sizeBtn = card.querySelector('.size-btn.active');
             const sugarBtn = card.querySelector('.sugar-btn.active');
             if(!sizeBtn || !sugarBtn){
-                showToast('Please select size and sugar level!', 'error');
+                showToast('Select size and sugar!', 'error');
                 return;
             }
 
@@ -54,18 +96,26 @@ document.addEventListener('DOMContentLoaded', function() {
             const price = sizePriceMap[size] || parseFloat(card.dataset.price);
             const key = `${id}_${size}_${sugar}`;
 
+            // Current quantity in cart
+            const currentInCart = cart[key] ? cart[key].quantity : 0;
+
+            if(currentInCart + 1 > baseStock){
+                showToast('Not enough stock!', 'error');
+                return;
+            }
+
             if(cart[key]) cart[key].quantity++;
-            else cart[key] = {id, name, size, sugar, price, quantity:1};
+            else cart[key] = { id, name, size, sugar, price, quantity: 1 };
 
             renderCart();
-            showToast(`${name} (${size}, ${sugar}%) added!`, 'success');
-        });
-    });
+            updateStockUI(card);
+            showToast(`${name} (${size}, ${sugar}%) added!`);
+        }
 
-    // Remove from cart
-    document.querySelectorAll('.btn-remove-from-cart').forEach(btn=>{
-        btn.addEventListener('click', function(){
-            const card = this.closest('.product-card');
+        // ----- Remove from Cart -----
+        const removeBtn = target.closest('.btn-remove-from-cart');
+        if(removeBtn){
+            const card = removeBtn.closest('.product-card');
             const id = card.dataset.id;
             const size = card.querySelector('.size-btn.active').dataset.size;
             const sugar = card.querySelector('.sugar-btn.active').dataset.sugar;
@@ -77,11 +127,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             renderCart();
+            updateStockUI(card);
             showToast('Item removed', 'info');
-        });
+        }
     });
 
-    // Render cart with total
+    // ===== Render Cart Table =====
     function renderCart(){
         const tbody = document.querySelector('#cart-table tbody');
         tbody.innerHTML = '';
@@ -94,36 +145,53 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${item.size}</td>
                 <td>${item.sugar}%</td>
                 <td>${item.quantity}</td>
-                <td>$${(item.price*item.quantity).toFixed(2)}</td>`;
+                <td>$${(item.price*item.quantity).toFixed(2)}</td>
+            `;
             tbody.appendChild(row);
-
-            total += item.price * item.quantity;
+            total += item.price*item.quantity;
         });
 
-        // Add total row
-        let totalRow = document.createElement('tr');
-        totalRow.innerHTML = `<td colspan="4" class="text-end fw-bold">Total:</td>
-                              <td class="fw-bold">$${total.toFixed(2)}</td>`;
-        tbody.appendChild(totalRow);
+        if(Object.keys(cart).length > 0){
+            const totalRow = document.createElement('tr');
+            totalRow.innerHTML = `<td colspan="4" class="text-end fw-bold">Total:</td>
+                                  <td class="fw-bold">$${total.toFixed(2)}</td>`;
+            tbody.appendChild(totalRow);
+        }
     }
 
-    // Checkout
-    document.querySelector('#checkout').addEventListener('click', function(e){
-        e.preventDefault();
+    // ===== Update Stock Display in UI =====
+    function updateStockUI(card){
+        const id = card.dataset.id;
+        const availableSpan = card.querySelector('.available-stock');
+        const baseStock = parseInt(card.dataset.quantity) || 0;
 
+        // Sum quantities in cart for this product
+        const usedInCart = Object.values(cart)
+            .filter(i => i.id === id)
+            .reduce((sum, i) => sum + i.quantity, 0);
+
+        if(availableSpan){
+            availableSpan.textContent = baseStock - usedInCart;
+        }
+    }
+
+    // ===== Checkout =====
+    const checkoutBtn = document.querySelector('#checkout');
+    checkoutBtn.addEventListener('click', function(e){
+        e.preventDefault();
         if(Object.keys(cart).length === 0){
             showToast('Cart is empty!', 'error');
             return;
         }
 
-        let total = Object.values(cart).reduce((sum, item)=> sum + item.price*item.quantity, 0);
+        const total = Object.values(cart).reduce((sum, i)=> sum + i.price*i.quantity, 0);
 
         Swal.fire({
-            title:'Confirm Checkout',
-            html:`<p>Total: <strong>$${total.toFixed(2)}</strong></p>`,
-            icon:'question',
-            showCancelButton:true,
-            confirmButtonText:'Confirm'
+            title: 'Confirm Checkout',
+            html: `<p>Total: <strong>$${total.toFixed(2)}</strong></p>`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Confirm'
         }).then(result=>{
             if(result.isConfirmed){
                 const csrfToken = document.querySelector('input[name="_token"]').value;
@@ -134,60 +202,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 fetch(document.querySelector('#checkout-form').action, {
                     method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
-                    },
+                    headers: { 'X-CSRF-TOKEN': csrfToken },
                     body: formData
                 })
-                .then(async res => {
-    const text = await res.text();
-    try {
-        const data = JSON.parse(text);
-        if (data.success) {
-            if (data.payment_method === 'qr') {
-                Swal.fire({
-                    title: 'Scan QR to Pay',
-                    html: `
-                        <p>Total: <strong>$${total.toFixed(2)}</strong></p>
-                        <img src="${data.qr_url}" alt="QR Code" style="width:300px; height:300px;">
-                        <div style="margin-top:20px;">
-                            <button id="btn-paid" class="swal2-confirm swal2-styled" style="background:#28a745;">Customer Paid</button>
-                            <button id="btn-cancel" class="swal2-cancel swal2-styled" style="background:#dc3545;">Cancel Payment</button>
-                        </div>
-                    `,
-                    showConfirmButton: false,
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        const paidBtn = Swal.getPopup().querySelector('#btn-paid');
-                        const cancelBtn = Swal.getPopup().querySelector('#btn-cancel');
-                        paidBtn.addEventListener('click', () => {
-                            Swal.close();
-                            showToast('Payment confirmed!', 'success');
-                            cart = {};
-                            renderCart();
+                .then(res => res.json())
+                .then(data=>{
+                    if(data.success){
+                        showToast(data.message || 'Checkout successful!', 'success');
+                        cart = {};
+                        renderCart();
+
+                        // Update stock in all product cards
+                        Object.keys(data.updated_stock || {}).forEach(pid=>{
+                            const card = document.querySelector(`.product-card[data-id="${pid}"]`);
+                            if(card){
+                                const span = card.querySelector('.available-stock');
+                                if(span) span.textContent = data.updated_stock[pid];
+                            }
                         });
-                        cancelBtn.addEventListener('click', () => {
-                            Swal.close();
-                            showToast('Payment cancelled!', 'info');
-                        });
+                    } else {
+                        showToast(data.message || 'Error during checkout', 'error');
                     }
+                })
+                .catch(err=>{
+                    console.error(err);
+                    showToast('Server error!', 'error');
                 });
-            } else {
-                showToast(data.message, 'success');
-                cart = {};
-                renderCart();
-            }
-        } else {
-            showToast(data.message || 'Error occurred', 'error');
-        }
-    } catch (e) {
-        console.error('Server Response:', text);
-        showToast('Server error!', 'error');
-    }
-});
-
-
             }
         });
     });

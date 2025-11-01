@@ -36,37 +36,6 @@ Auth::routes();
 
 // 🟢 Public user pages
 Route::get('/', function () {return redirect()->route('view.login');});
-// Route::get('products/contact', [ProductsController::class, 'contact'])->name('product.contact');
-// Route::get('products/service', [ProductsController::class, 'service'])->name('product.service');
-// Route::get('products/menu', [ProductsController::class, 'menu'])->name('product.menu');
-// Route::get('products/about', [ProductsController::class, 'about'])->name('product.about');
-// Route::get('products/product-single/{id}', [ProductsController::class, 'singleProduct'])->name('product.single');
-// Route::get('/welcome', [HomeController::class, 'welcome'])->name('welcome');
-// Route::post('products/product-single/{id}', [ProductsController::class, 'addCart'])->name('add.cart');
-// Route::get('products/cart', [ProductsController::class, 'cart'])->name('cart')->middleware('auth:web');
-// Route::get('products/cart-delete/{id}', [ProductsController::class, 'deleteProductCart'])->name('cart.product.delete');
-// Route::post('products/prepare-checkout', [ProductsController::class, 'prepareCheckout'])->name('prepare.checkout');
-// Route::get('products/checkout', [ProductsController::class, 'checkout'])->name('checkout')->middleware('auth:web');
-// Route::post('products/store-checkout', [ProductsController::class, 'storeCheckout'])->name('store.checkout');
-// Route::post('products/checkout', [ProductsController::class, 'proccessCheckout'])->name('proccess.checkout')->middleware('auth:web');
-// Route::get('products/success', [ProductsController::class, 'success'])->name('products.success');
-// Route::get('products/paypal', [ProductsController::class, 'paywithpaypal'])->name('products.paypal')->middleware('check.for.price');
-// Route::post('products/paypal', [ProductsController::class, 'paywithpaypal'])->name('products.paypal')->middleware('check.for.price');
-// Route::get('admin/staff-qr-pay/{order_ref}', [AdminsController::class, 'qrPay'])->name('staff.qr-pay');
-// Route::middleware(['auth:admin'])->group(function () {
-// Route::get('/admin/paypal', [AdminsController::class, 'paywithPaypal'])->name('admin.paypal');
-// Route::get('/admin/paypal-success', [AdminsController::class, 'paypalSuccess'])->name('admin.paypal.success');});
-// Route::get('products/success', [ProductsController::class, 'success'])->name('products.success')->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
-// Route::get('/admin/qr-payment', [AdminsController::class, 'showQrPayment'])->name('admin.qr.payment');
-// Route::get('receipt/{id}', [ProductsController::class, 'showReceipt'])->name('receipt.show');
-// Route::post('products/booking', [ProductsController::class, 'BookingTables'])->name('booking.tables');
-// Route::get('users/menu', [UsersController::class, 'displayOrders'])->name('users.orders')->middleware('auth:web');
-// Route::get('users/bookings', [UsersController::class, 'displayBookings'])->name('users.bookings')->middleware('auth:web');
-// Route::get('users/write-reviews', [UsersController::class, 'writeReviews'])->name('write.reviews')->middleware('auth:web');
-// Route::post('users/write-reviews', [UsersController::class, 'proccesswriteReviews'])->name('proccess.write.reviews')->middleware('auth:web');
-// Route::get('/staff-qr-pay/{order_ref}', [AdminsController::class, 'qrPay'])->name('staff.qr-pay');
-
-
 
 
 
@@ -91,16 +60,14 @@ Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
     Route::get('/help', [AdminsController::class, 'Help'])->name('admins.help');
 
 
-// Raw Material Stock
-    Route::get('/admin/stock', [RawMaterialController::class, 'viewStock'])->name('admin.stock');
-    Route::post('/admin/stock/{id}', [RawMaterialController::class, 'updateStock'])->name('admin.stock.update');
-    Route::get('admin/stock', [RawMaterialController::class, 'viewRawMaterials'])
-     ->name('admin.raw-material.stock');
-    Route::patch('raw-stock/update/{id}', [RawMaterialController::class, 'update'])->name('admin.raw-material.update');
-
-    // Admin Reports & Analytics
+    Route::post('/products/{id}/add-quantity', [RawMaterialController::class, 'addQuantity'])->name('products.add-quantity');
+    Route::get('/stock', [RawMaterialController::class, 'viewRawMaterials'])->name('admin.raw-material.stock');
+    Route::get('admin/low-stock', [ReportController::class, 'lowStock'])->name('admin.low.stock');
+    Route::patch('/raw-material/update/{id}', [RawMaterialController::class, 'update'])->name('admin.raw-material.update');
     Route::get('admin/reports/sales', [ReportController::class, 'salesReport'])->name('admin.sales.report');
     Route::get('admin/low-stock', [ReportController::class, 'lowStock'])->name('admin.low.stock');
+Route::patch('/products/update-stock/{id}', [ReportController::class, 'updateStock'])
+    ->name('admin.product.update-stock');
 
 
 
@@ -143,6 +110,5 @@ Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
     Route::get('/staff-sell', [StaffController::class, 'StaffSellForm'])->name('staff.sell.form');
     Route::post('/staff-sell', [StaffController::class, 'StaffSellProduct'])->name('staff.sell');
     Route::post('/staff-checkout', [StaffController::class, 'staffCheckout'])->name('staff.checkout');
-    Route::get('/staff-checkout', [StaffController::class, 'staffCheckout'])->name('staff.checkout');
 });
 

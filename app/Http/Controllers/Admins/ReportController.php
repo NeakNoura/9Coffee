@@ -11,15 +11,12 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
-    public function viewStock()
+public function viewStock()
 {
-    $products = Product::select('name', DB::raw('MAX(id) as id'), DB::raw('MAX(price) as price'), DB::raw('SUM(quantity) as quantity'))
-        ->groupBy('name')
-        ->orderBy('id', 'asc')
-        ->get();
-
+    $products = Product::all();
     return view('admins.stock', compact('products'));
 }
+
 
 public function updateStock(Request $request, $id)
 {
@@ -31,7 +28,7 @@ public function updateStock(Request $request, $id)
     $product->quantity = $request->quantity;
     $product->save();
 
-    return redirect()->route('admin.stock')->with('success', 'Stock updated successfully!');
+    return redirect()->back()->with('success', 'Stock updated successfully!');
 }
 
 

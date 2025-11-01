@@ -1,8 +1,10 @@
-
 document.addEventListener('DOMContentLoaded', function() {
     const tableBody = document.querySelector('table tbody');
 
-    // Edit Status popup
+    // Get CSRF token from meta tag
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    // ---------- CHANGE STATUS ----------
     tableBody.addEventListener('click', function(e) {
         const btn = e.target.closest('.btn-edit-status');
         if (!btn) return;
@@ -29,9 +31,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const newStatus = result.value;
 
                 fetch(`/admin/edit-orders/${orderId}`, {
-                    method: 'POST',
+                    method: 'POST', // or PATCH if your route uses PATCH
                     headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-CSRF-TOKEN': csrfToken,
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     },
@@ -44,10 +46,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
                         // Update status badge in table
                         const row = btn.closest('tr');
-                        const statusCell = row.querySelector('td:nth-child(10)');
+                        const statusCell = row.querySelector('td:nth-child(6)'); // adjust column index
                         let colorClass = 'secondary';
                         if(newStatus === 'Pending') colorClass = 'warning';
-                        else if(newStatus === 'Delivered') colorClass = 'success';
+                        else if(newStatus === 'Paid') colorClass = 'success';
                         else if(newStatus === 'Cancelled') colorClass = 'danger';
 
                         statusCell.innerHTML = `<span class="badge bg-${colorClass}">${newStatus}</span>`;
@@ -55,8 +57,96 @@ document.addEventListener('DOMContentLoaded', function() {
                     } else {
                         Swal.fire('Error', data.message, 'error');
                     }
+                })
+                .catch(err => {
+                    Swal.fire('Error', 'Something went wrong!', 'error');
                 });
             }
         });
     });
+
+    // ---------- DELETE ORDER ----------
+    tableBody.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-delete');
+        if(!btn) return;
+
+        const orderId = btn.dataset.id;
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if(result.isConfirmed) {
+                fetch(`/admin/delete-orders/${orderId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success){
+                        Swal.fire('Deleted!', data.message, 'success');
+
+                        // Remove row from table
+                        const row = btn.closest('tr');
+                        row.remove();
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                    }
+                })
+                .catch(err => {
+                    Swal.fire('Error', 'Something went wrong!', 'error');
+                });
+            }
+        });
+    });
+
+    // ---------- DELETE ALL ORDERS ----------
+    const deleteAllBtn = document.querySelector('form[action$="delete.all.orders"] button');
+    if(deleteAllBtn){
+        deleteAllBtn.addEventListener('click', function(e){
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "All orders will be deleted!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete all!'
+            }).then((result) => {
+                if(result.isConfirmed){
+                    const form = deleteAllBtn.closest('form');
+                    fetch(form.action, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.success){
+                            Swal.fire('Deleted!', data.message, 'success');
+                            // Remove all rows
+                            tableBody.innerHTML = '';
+                        } else {
+                            Swal.fire('Error', data.message, 'error');
+                        }
+                    })
+                    .catch(err => {
+                        Swal.fire('Error', 'Something went wrong!', 'error');
+                    });
+                }
+            });
+        });
+    }
 });

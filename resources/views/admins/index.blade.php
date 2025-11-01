@@ -163,48 +163,7 @@
             </div>
         </a>
     </div>
-<style>
-    /* Table styling */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background-color: rgba(255, 255, 255, 0.95); /* ensures text is visible */
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
 
-    thead tr {
-        background: linear-gradient(90deg, #6c5ce7, #00b894); /* header gradient */
-        color: #fff; /* header text color */
-        text-align: left;
-    }
-
-    thead td {
-        padding: 12px;
-        font-weight: 600;
-    }
-
-    tbody td {
-        padding: 10px;
-        color: #2d3436; /* dark text for visibility */
-    }
-
-    tbody tr:nth-child(even) {
-        background-color: rgba(0,0,0,0.03); /* alternate row background */
-    }
-
-    tbody tr:hover {
-        background-color: rgba(108, 92, 231, 0.1); /* hover effect */
-        transition: background 0.3s ease;
-    }
-
-    .badge {
-        font-weight: 600;
-        font-size: 0.85rem;
-        color: #fff; /* ensure badge text is visible */
-    }
-</style>
                 <!-- ================ Order Details List ================= -->
                 <div class="details">
                     <div class="recentOrders">
@@ -213,19 +172,20 @@
         <a href="{{ route('all.orders') }}" class="btn">View All</a>
     </div>
 
-        <table>
+ <div class="recent-orders-table">
+    <table>
         <thead>
             <tr>
                 <td>Product</td>
                 <td>Price</td>
                 <td>Payment</td>
                 <td>Status</td>
-                <td>Order Date</td> <!-- Added -->
+                <td>Order Date</td>
             </tr>
         </thead>
         <tbody>
             @forelse($recentOrders as $order)
-            <tr style="border-bottom:1px solid #6b4c3b;">
+            <tr>
                 <td>{{ $order->product->name ?? 'N/A' }}</td>
                 <td>${{ $order->price }}</td>
                 <td>{{ $order->payment_status ?? 'Pending' }}</td>
@@ -238,7 +198,7 @@
                         {{ $order->status }}
                     </span>
                 </td>
-                    <td>{{ $order->created_at->timezone('Asia/Phnom_Penh')->format('d M Y H:i') }}</td>
+                <td>{{ $order->created_at->timezone('Asia/Phnom_Penh')->format('d M Y H:i') }}</td>
             </tr>
             @empty
             <tr>
@@ -247,6 +207,8 @@
             @endforelse
         </tbody>
     </table>
+</div>
+
 
         </div>
             <!-- ================= Analytics Charts ================= -->

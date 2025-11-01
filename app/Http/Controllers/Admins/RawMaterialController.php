@@ -59,12 +59,10 @@ class RawMaterialController extends Controller
     }
 
 // Show raw material stock
-public function viewRawMaterials()
-{
-    $rawMaterials = \App\Models\RawMaterial::orderBy('id', 'asc')->get();
+public function viewRawMaterials() {
+    $rawMaterials = RawMaterial::all();
     return view('admins.stock', compact('rawMaterials'));
 }
-
 
 
 // Update raw material quantity
@@ -80,4 +78,25 @@ public function updateRawMaterial(Request $request, $id)
 
     return redirect()->route('admin.raw-material.stock')->with('success', 'Stock updated successfully!');
 }
+
+public function addQuantity(Request $request, $id)
+{
+    $request->validate([
+        'quantity' => 'required|integer|min:1',
+    ]);
+
+    $product = Product::findOrFail($id);
+    $product->quantity += $request->quantity;
+    $product->save();
+
+    return response()->json([
+        'success' => true,
+        'message' => "Added {$request->quantity} to {$product->name}",
+        'new_quantity' => $product->quantity
+    ]);
+}
+
+
+
+
 }
