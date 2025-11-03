@@ -85,13 +85,14 @@ Route::patch('/products/update-stock/{id}', [ReportController::class, 'updateSto
     Route::delete('/delete-all-orders', [OrderController::class, 'DeleteAllOrders'])->name('delete.all.orders');
 
 
-    // Products management
-    Route::get('/all-products', [ProductController::class, 'DisplayProducts'])->name('all.products');
-    Route::get('/create-products', [ProductController::class, 'CreateProducts'])->name('create.products');
-    Route::post('/edit-products/{id}', [ProductController::class, 'AjaxUpdateProducts'])->name('ajax.edit.products');
-    Route::post('/update-products/{id}', [ProductController::class, 'UpdateProducts'])->name('update.products');
-    Route::post('/store-products', [ProductController::class, 'StoreProducts'])->name('store.products');
-    Route::delete('/delete-products/{id}', [ProductController::class, 'DeleteProducts'])->name('ajax.delete.products');
+// Products management
+Route::get('/all-products', [ProductController::class, 'DisplayProducts'])->name('all.products');
+Route::get('/create-products', [ProductController::class, 'CreateProducts'])->name('create.products');
+Route::post('/store-products', [ProductController::class, 'StoreProducts'])->name('store.products');
+
+// AJAX edit and delete
+Route::post('/products/{id}/edit-products', [ProductController::class, 'AjaxUpdateProducts'])->name('ajax.edit.products');
+Route::delete('/products/{id}/delete-products', [ProductController::class, 'DeleteProducts'])->name('ajax.delete.products');
 
     // Bookings management
     Route::get('/all-bookings', [BookingController::class, 'DisplayBookings'])->name('all.bookings');

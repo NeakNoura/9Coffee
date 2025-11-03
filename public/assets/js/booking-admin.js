@@ -1,5 +1,5 @@
-
 document.addEventListener('DOMContentLoaded', function() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     // Change Status
     document.querySelectorAll('.btn-edit-booking-status').forEach(btn => {
@@ -22,30 +22,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 background: '#3e2f2f',
                 color: '#fff'
             }).then((result) => {
-                if(result.isConfirmed) {
+                if (result.isConfirmed) {
                     const newStatus = result.value;
 
                     fetch(`/admin/update-bookings/${bookingId}`, {
                         method: 'POST',
                         headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'X-CSRF-TOKEN': csrfToken,
                             'Content-Type': 'application/json',
                             'Accept': 'application/json'
                         },
-                        body: JSON.stringify({status: newStatus})
+                        body: JSON.stringify({ status: newStatus })
                     })
                     .then(res => res.json())
                     .then(data => {
-                        if(data.success) {
+                        if (data.success) {
                             Swal.fire('Updated!', data.message, 'success');
 
-                            // Update badge
+                            // Update badge dynamically
                             const row = document.getElementById(`booking-${bookingId}`);
                             const statusCell = row.querySelector('td:nth-child(8)');
                             let colorClass = 'secondary';
-                            if(newStatus === 'Pending') colorClass = 'warning';
-                            else if(newStatus === 'Confirmed') colorClass = 'success';
-                            else if(newStatus === 'Cancelled') colorClass = 'danger';
+                            if (newStatus === 'Pending') colorClass = 'warning';
+                            else if (newStatus === 'Confirmed') colorClass = 'success';
+                            else if (newStatus === 'Cancelled') colorClass = 'danger';
 
                             statusCell.innerHTML = `<span class="badge bg-${colorClass}">${newStatus}</span>`;
                             btn.dataset.status = newStatus;
@@ -74,22 +74,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 background: '#3e2f2f',
                 color: '#fff'
             }).then((result) => {
-                if(result.isConfirmed) {
+                if (result.isConfirmed) {
                     fetch(`/admin/delete-bookings/${bookingId}`, {
                         method: 'DELETE',
                         headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'X-CSRF-TOKEN': csrfToken,
                             'Accept': 'application/json'
                         }
                     })
                     .then(res => res.json())
                     .then(data => {
-                        if(data.success) {
+                        if (data.success) {
                             Swal.fire('Deleted!', data.message, 'success');
-
-                            // Remove row
-                            const row = document.getElementById(`booking-${bookingId}`);
-                            row.remove();
+                            document.getElementById(`booking-${bookingId}`).remove();
                         } else {
                             Swal.fire('Error', data.message, 'error');
                         }
@@ -98,5 +95,4 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
-
 });

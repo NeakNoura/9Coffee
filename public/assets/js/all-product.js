@@ -19,13 +19,14 @@ document.addEventListener('DOMContentLoaded', function() {
             confirmButtonText: 'Yes, delete it!',
         }).then(result => {
             if (result.isConfirmed) {
-                fetch(`/admin/delete-products/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
-                    }
-                })
+                fetch(`/admin/products/${id}/delete-products`, {
+    method: 'DELETE',
+    headers: {
+        'X-CSRF-TOKEN': csrfToken,
+        'Accept': 'application/json'
+    }
+})
+
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
@@ -61,21 +62,24 @@ document.addEventListener('DOMContentLoaded', function() {
             confirmButtonText: 'Update'
         }).then(result => {
             if (result.isConfirmed) {
-                const formData = {
-                    name: document.getElementById('swal-name').value,
-                    price: document.getElementById('swal-price').value,
-                    type: btn.dataset.type || 'default'
-                };
+               const formData = {
+    name: document.getElementById('swal-name').value,
+    price: document.getElementById('swal-price').value,
+};
 
-                fetch(`/admin/edit-products/${id}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                })
+
+                const url = btn.dataset.url;
+
+fetch(url, {
+    method: 'POST',
+    headers: {
+        'X-CSRF-TOKEN': csrfToken,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    },
+    body: JSON.stringify(formData)
+})
+
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {

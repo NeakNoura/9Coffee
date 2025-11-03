@@ -1,23 +1,28 @@
 <?php
 namespace App\Http\Controllers\Admins;
-
+use App\Models\Product\Product;
+use App\Models\ProductType;
+use App\Models\SubType;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Product\Product;
 use App\Models\Product\Order;
 use Illuminate\Support\Facades\DB;
-use App\Models\RawMaterial;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-
 class StaffController extends Controller
 {
-// Example in StaffController
+
+
 public function StaffSellForm()
 {
-    $products = Product::with('rawMaterials')->orderBy('id','asc')->get();
-    return view('admins.staffSell', compact('products'));
+    $products = Product::with('type', 'subType', 'rawMaterials')->orderBy('id','asc')->get();
+    $productsType = $products->groupBy(fn($p) => strtolower($p->type->name ?? 'others'));
+    $types = ProductType::all();
+    $subTypes = SubType::all();
+
+    return view('admins.staffSell', compact('products', 'productsType', 'types', 'subTypes'));
 }
+
+
 
 public function StaffSellProduct(Request $request)
 {
@@ -31,15 +36,10 @@ public function StaffSellProduct(Request $request)
     ]);
 
     $product = Product::find($request->product_id);
-
-    // Check if enough stock
     if ($product->quantity < $request->quantity) {
         return redirect()->back()->with('error', 'Not enough stock!');
     }
-
     $totalPrice = $product->price * $request->quantity;
-
-
     $order = Order::create([
         'product_id' => $product->id,
         'price' => $totalPrice,
@@ -50,8 +50,6 @@ public function StaffSellProduct(Request $request)
         'state' => $request->state ?? '',
         'user_id' => Auth::id(),
     ]);
-
-    // Deduct sold quantity from product stock
     $product->quantity -= $request->quantity;
     $product->save();
 
@@ -72,7 +70,7 @@ public function staffCheckout(Request $request)
     $updatedStock = [];
     $totalAmount = 0;
 
-    \DB::beginTransaction();
+    DB::beginTransaction();
     try {
         foreach($cart as $key => $item){
             $parts = explode('_', $key);
@@ -85,7 +83,7 @@ public function staffCheckout(Request $request)
 
             // Check available stock
             if($item['quantity'] > $product->available_stock){
-                \DB::rollBack();
+                DB::rollBack();
                 return response()->json([
                     'success'=>false,
                     'message'=>"Not enough stock for {$product->name}"
@@ -121,7 +119,7 @@ public function staffCheckout(Request $request)
         $cashier->balance = ($cashier->balance ?? 0) + $totalAmount;
         $cashier->save();
 
-        \DB::commit();
+        DB::commit();
 
         return response()->json([
             'success'=>true,
@@ -130,7 +128,7 @@ public function staffCheckout(Request $request)
         ]);
 
     } catch (\Exception $e){
-        \DB::rollBack();
+        DB::rollBack();
         return response()->json([
             'success'=>false,
             'message'=>$e->getMessage()

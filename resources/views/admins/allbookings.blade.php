@@ -1,10 +1,15 @@
 @extends('layouts.admin')
 
 @section('content')
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 <div class="container-fluid mt-4 px-4">
-<a href="{{ route('admins.dashboard') }}" class="btn btn-light mt-3" style="color:#3e2f2f;">
-                <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
-            </a>
+ <div class="mb-4">
+
+                <a href="javascript:history.back()" class="btn btn-outline-light fw-bold">
+                    <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+                </a>
+            </div>
     {{-- ===================== CREATE BOOKING FORM ===================== --}}
     <div class="card shadow-sm border-0 rounded-4 mb-4" style="background-color: #3e2f2f; color: #f5f5f5;">
         <div class="card-header text-center" style="background-color: #db770c; color: #fff; font-weight:700;">

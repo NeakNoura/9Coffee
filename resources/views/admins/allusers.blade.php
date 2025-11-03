@@ -10,9 +10,11 @@
         <h2 class="fw-bold text-light mb-0">
             <i class="bi bi-people-fill text-warning me-2"></i> User Management
         </h2>
-        <a href="{{ route('admins.dashboard') }}" class="btn btn-light btn-sm text-dark">
-            <i class="bi bi-arrow-left"></i> Back to Dashboard
-        </a>
+        <div class="mb-4">
+                <a href="javascript:history.back()" class="btn btn-outline-light fw-bold">
+                    <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+                </a>
+            </div>
     </div>
 
     {{-- Search Bar --}}

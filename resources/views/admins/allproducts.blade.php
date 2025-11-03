@@ -1,7 +1,13 @@
 @extends('layouts.admin')
 
 @section('content')
+@php
+$types = App\Models\ProductType::all();
+@endphp
+
 <div class="container-fluid py-4">
+
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
     {{-- Page Header --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -38,7 +44,6 @@
                             <th>Product</th>
                             <th>Image</th>
                             <th>Price</th>
-                            <th>Type</th>
                             <th>Edit</th>
                             <th>Delete</th>
                         </tr>
@@ -53,13 +58,26 @@
                                 <img src="{{ asset('assets/images/'.$product->image) }}" alt="{{ $product->name }}" class="product-img">
                             </td>
                             <td>${{ number_format($product->price,2) }}</td>
-                            <td>{{ $product->type }}</td>
-                            <td>
-                                <button class="btn btn-edit" data-id="{{ $product->id }}">Edit</button>
-                            </td>
-                            <td>
-                                <button class="btn btn-delete" data-id="{{ $product->id }}">Delete</button>
-                            </td>
+                          <td>
+    <button class="btn btn-edit"
+        data-id="{{ $product->id }}"
+        data-name="{{ $product->name }}"
+        data-price="{{ $product->price }}"
+        data-url="{{ route('ajax.edit.products', $product->id) }}">
+        Edit
+    </button>
+</td>
+
+<td>
+    <button class="btn btn-delete"
+        data-id="{{ $product->id }}"
+        data-name="{{ $product->name }}"
+        data-price="{{ $product->price }}"
+        data-url="{{ route('ajax.delete.products', $product->id) }}">
+        Delete
+    </button>
+</td>
+
                         </tr>
                         @php $counter++; @endphp
                         @endforeach
@@ -76,5 +94,6 @@
 </div>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 <link rel="stylesheet" href="{{ asset('assets/css/allproduct.css') }}">
+<script src="{{ asset('assets/js/all-product.js') }}"></script>
 
 @endsection

@@ -2,8 +2,10 @@
 
 @section('content')
 <div class="container-fluid mt-5">
-     </div>
-<a href="{{ route('admins.dashboard') }}" class="btn btn-light mt-3" style="color:#3e2f2f;">Back to Dashboard</a>
+      <div class="mb-4">
+                <a href="javascript:history.back()" class="btn btn-outline-light fw-bold">
+                    <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+                </a>
             </div>
     <div class="card shadow-sm border-0 rounded-4" style="background-color:#3e2f2f; color:#f5f5f5;">
         <div class="card-header" style="background-color:#db770cff; color:#fff;">

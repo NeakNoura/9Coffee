@@ -2,7 +2,8 @@
 
 namespace App\Models\Product;
 use App\Models\RawMaterial;
-
+use App\Models\ProductType;
+use App\Models\SubType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -13,14 +14,24 @@ class Product extends Model
     use HasFactory;
     protected $table = "products";
 
-  protected $fillable = [
+protected $fillable = [
     "name",
     "image",
     "price",
     "description",
-    "type",
-    "quantity", // <- add this
+    "product_type_id", // changed from "type" string
+    "sub_type_id",     // new sub-type column
+    "quantity",
 ];
+
+public function type() {
+    return $this->belongsTo(ProductType::class, 'product_type_id');
+}
+
+public function subType() {
+    return $this->belongsTo(SubType::class, 'sub_type_id');
+}
+
 
      // Relationship to raw materials
 public function rawMaterials()

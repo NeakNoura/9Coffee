@@ -65,9 +65,11 @@
 
             {{-- Footer Buttons --}}
             <div class="d-flex justify-content-between mt-4">
-                <a href="{{ route('admins.dashboard') }}" class="btn btn-outline-light fw-bold" style="border-color:#8b5a44;">
+                 <div class="mb-4">
+                <a href="javascript:history.back()" class="btn btn-outline-light fw-bold">
                     <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
                 </a>
+            </div>
                 <button class="btn btn-success fw-bold">
                     <i class="bi bi-file-earmark-excel"></i> Download Excel
                 </button>

@@ -44,18 +44,18 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Product Type</label>
-                    <select name="type" class="form-select form-input" required>
-                        <option disabled selected>Choose Type</option>
-                        <option value="drinks" {{ (isset($product) && $product->type=='drinks') ? 'selected' : '' }}>Drinks</option>
-                        <option value="desserts" {{ (isset($product) && $product->type=='desserts') ? 'selected' : '' }}>Desserts</option>
-                        <option value="others" {{ (isset($product) && $product->type=='others') ? 'selected' : '' }}>Others</option>
-                    </select>
+                   <label class="form-label fw-bold">Product Type</label>
+<select name="product_type_id" class="form-select form-input" required>
+    <option disabled selected>Choose Type</option>
+    @foreach($types as $type)
+        <option value="{{ $type->id }}"
+            {{ (isset($product) && $product->product_type_id == $type->id) ? 'selected' : '' }}>
+            {{ $type->name }}
+        </option>
+    @endforeach
+</select>
+
                 </div>
-<div class="mb-3">
-    <label class="form-label fw-bold">Quantity</label>
-    <input type="number" name="quantity" class="form-control form-input" value="{{ $product->quantity ?? old('quantity') }}" min="0" required>
-</div>
 
                 <div class="d-flex justify-content-between mt-4">
                     <button type="submit" class="btn btn-submit w-50 me-2">

@@ -64,9 +64,11 @@
             </div>
 
             {{-- Back Button --}}
-            <a href="{{ route('admins.dashboard') }}" class="btn btn-light mt-3" style="color:#3e2f2f;">
-                <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
-            </a>
+                <div class="mb-4">
+                <a href="javascript:history.back()" class="btn btn-outline-light fw-bold">
+                    <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+                </a>
+            </div>
         </div>
     </div>
 </div>
