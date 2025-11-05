@@ -51,7 +51,31 @@ public function salesReport()
 }
 public function lowStock()
 {
-    $lowStockProducts = Product::where('quantity', '<', 5)->get();
+    $allProducts = Product::with('rawMaterials')->get();
+
+    // Filter by calculated available_stock
+    $lowStockProducts = $allProducts->filter(function($product){
+        return $product->available_stock <= 5; // threshold
+    });
+
     return view('admins.low_stock', compact('lowStockProducts'));
 }
+public function addQuantity(Request $request, $id)
+{
+    $request->validate([
+        'quantity' => 'required|integer|min:1',
+    ]);
+
+    $product = Product::findOrFail($id);
+    $product->quantity += $request->quantity;
+    $product->save();
+
+    return response()->json([
+        'success' => true,
+        'new_quantity' => $product->quantity,
+        'message' => $product->name . ' stock updated!',
+    ]);
+}
+
+
 }

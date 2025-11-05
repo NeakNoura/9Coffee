@@ -1,5 +1,4 @@
-
-  document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     document.querySelector('table tbody').addEventListener('click', function(e) {
@@ -50,4 +49,3 @@
         });
     });
 });
-

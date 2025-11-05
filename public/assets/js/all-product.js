@@ -59,16 +59,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 <input id="swal-price" type="number" class="swal2-input" placeholder="Price" value="${price}">
             `,
             showCancelButton: true,
-            confirmButtonText: 'Update'
+            confirmButtonText: 'Update',
+            didOpen: () => {
+        // Change the Update button color
+        const confirmBtn = Swal.getConfirmButton();
+        confirmBtn.style.backgroundColor = '#8B4513'; // brown
+        confirmBtn.style.color = '#fff';
+    }
         }).then(result => {
             if (result.isConfirmed) {
+
                const formData = {
     name: document.getElementById('swal-name').value,
     price: document.getElementById('swal-price').value,
 };
-
-
-                const url = btn.dataset.url;
+const url = btn.dataset.url;
 
 fetch(url, {
     method: 'POST',

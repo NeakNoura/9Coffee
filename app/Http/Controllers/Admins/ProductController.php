@@ -18,12 +18,9 @@ use Illuminate\Support\Facades\Redirect;
         }
     public function DisplayProducts(){
             $products = Product::select()->orderBy('id','asc')->get();
-
-
                 return view('admins.allproducts',compact('products'));
 
         }
-
 
     public function CreateProducts()
     {

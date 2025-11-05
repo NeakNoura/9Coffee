@@ -55,16 +55,14 @@ public function StaffSellProduct(Request $request)
 
     return redirect()->route('staff.sell.form')->with(['success' => 'Product sold successfully!']);
 }
+
 public function staffCheckout(Request $request)
 {
     $cart = json_decode($request->cart_data, true);
     $paymentMethod = $request->payment_method;
 
     if(empty($cart) || !is_array($cart)){
-        return response()->json([
-            'success' => false,
-            'message' => 'Cart is empty or invalid!'
-        ]);
+        return response()->json(['success'=>false,'message'=>'Cart is empty or invalid!']);
     }
 
     $updatedStock = [];
@@ -73,68 +71,61 @@ public function staffCheckout(Request $request)
     DB::beginTransaction();
     try {
         foreach($cart as $key => $item){
-            $parts = explode('_', $key);
-            $productId = $parts[0];
-            $size = $parts[1] ?? 'S';
-            $sugar = $parts[2] ?? '50';
+            $productId = $item['id'];
+            $size = $item['size'] ?? 'S';
+            $sugar = $item['sugar'] ?? '50';
 
-            $product = Product::with('rawMaterials')->find($productId);
+            $product = Product::find($productId);
             if(!$product) continue;
 
-            // Check available stock
-            if($item['quantity'] > $product->available_stock){
+            if($item['quantity'] > $product->quantity){
                 DB::rollBack();
-                return response()->json([
-                    'success'=>false,
-                    'message'=>"Not enough stock for {$product->name}"
-                ]);
+                return response()->json(['success'=>false,'message'=>"Not enough stock for {$product->name}"]);
             }
 
-            // Deduct ingredients
-            $product->deductIngredients($item['quantity']);
+            // Deduct stock
+            $product->quantity -= $item['quantity'];
+            $product->save();
 
-           $product->orders()->create([
-    'user_id'        => auth()->id(),        // Staff ID
-    'product_id'     => $product->id,
-    'quantity'       => $item['quantity'],
-    'size'           => $size,
-    'sugar'          => $sugar,
-    'first_name'     => 'Walk-in',           // required
-    'last_name'      => 'Customer',          // optional
-    'price'          => $item['price'],
-    'status'         => 'Paid Successfully',
-    'payment_status' => 'Cash',
-    'payment_method' => $paymentMethod,
-]);
+            // Total line price
+            $lineTotal = $item['unit_price'] * $item['quantity'];
 
+            // Store order
+            $product->orders()->create([
+                'user_id'        => auth()->id(),
+                'product_id'     => $product->id,
+                'quantity'       => $item['quantity'],
+                'size'           => $size,
+                'sugar'          => $sugar,
+                'first_name'     => 'Walk-in',
+                'last_name'      => 'Customer',
+                'price'          => $lineTotal,   // total for this line
+                'status'         => 'Paid Successfully',
+                'payment_status' => 'Cash',
+                'payment_method' => $paymentMethod,
+            ]);
 
-            $totalAmount += $item['price'] * $item['quantity'];
-
-            // Save updated stock for front-end
-            $updatedStock[$productId] = $product->available_stock - $item['quantity'];
+            $totalAmount += $lineTotal;
+            $updatedStock[$productId] = $product->quantity;
         }
 
-        // Update cashier balance (example: simple addition)
-        $cashier = auth()->user(); // assuming staff user
+        // Update staff balance
+        $cashier = auth()->user();
         $cashier->balance = ($cashier->balance ?? 0) + $totalAmount;
         $cashier->save();
 
         DB::commit();
 
-        return response()->json([
-            'success'=>true,
-            'message'=>'Checkout successful!',
-            'updated_stock'=>$updatedStock
-        ]);
+        return response()->json(['success'=>true,'message'=>'Checkout successful!','updated_stock'=>$updatedStock]);
 
     } catch (\Exception $e){
         DB::rollBack();
-        return response()->json([
-            'success'=>false,
-            'message'=>$e->getMessage()
-        ]);
+        return response()->json(['success'=>false,'message'=>$e->getMessage()]);
     }
 }
+
+
+
 
 
 }

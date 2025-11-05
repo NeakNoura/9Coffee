@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if(!staffSellSection) return;
 
     let cart = {};
-    const sizePriceMap = { S: 2, M: 3, L: 4 };
+    const sizePriceMap = { S: 3, M: 4, L: 5 }; // fixed price per size
 
     const filterBtns = document.querySelectorAll('.filter-btn');
     const filterSubBtns = document.querySelectorAll('.filter-sub-btn');
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
     staffSellSection.addEventListener('click', function(e){
         const target = e.target;
 
-        // Size/Sugar
+        // --- Size/Sugar selection ---
         if(target.classList.contains('size-btn') || target.classList.contains('sugar-btn')){
             const group = target.closest('.btn-group');
             group.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
@@ -51,35 +51,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if(target.classList.contains('size-btn')){
                 const card = target.closest('.product-card');
-                const basePrice = parseFloat(card.dataset.price);
                 const size = target.dataset.size;
-                card.querySelector('.product-price').textContent = `$${(sizePriceMap[size]||basePrice).toFixed(2)}`;
+                card.querySelector('.product-price').textContent = `$${sizePriceMap[size].toFixed(2)}`;
             }
         }
 
-        // Add to cart
+        // --- Add to cart ---
         const addBtn = target.closest('.btn-add-to-cart');
         if(addBtn){
             const card = addBtn.closest('.product-card');
-            const id = card.dataset.id, name = card.dataset.name;
+            const id = card.dataset.id;
+            const name = card.dataset.name;
             const sizeBtn = card.querySelector('.size-btn.active');
             const sugarBtn = card.querySelector('.sugar-btn.active');
+            const qtyInput = parseInt(card.querySelector('.qty-input')?.value) || 1;
+
             if(!sizeBtn || !sugarBtn){ showToast('Select size & sugar','error'); return; }
 
             const size = sizeBtn.dataset.size;
             const sugar = sugarBtn.dataset.sugar;
             const key = `${id}_${size}_${sugar}`;
-            const baseStock = parseInt(card.dataset.quantity)||0;
-            const currentInCart = cart[key]?cart[key].quantity:0;
 
-            if(currentInCart+1>baseStock){ showToast('Not enough stock','error'); return; }
-            if(cart[key]) cart[key].quantity++; else cart[key]={id,name,size,sugar,price:sizePriceMap[size]||parseFloat(card.dataset.price),quantity:1};
+            const unitPrice = sizePriceMap[size];
+            const baseStock = parseInt(card.dataset.quantity) || 0;
+            const currentInCart = cart[key] ? cart[key].quantity : 0;
 
-            renderCart(); updateStockUI(card);
-            showToast(`${name} (${size},${sugar}%) added!`);
+            if(currentInCart + qtyInput > baseStock){ showToast('Not enough stock','error'); return; }
+
+            if(cart[key]){
+                cart[key].quantity += qtyInput;
+            } else {
+                cart[key] = {id, name, size, sugar, unit_price: unitPrice, quantity: qtyInput};
+            }
+
+            renderCart();
+            updateStockUI(card);
+            showToast(`${name} (${size}, ${sugar}%) x${qtyInput} added!`);
         }
 
-        // Remove from cart
+        // --- Remove from cart ---
         const removeBtn = target.closest('.btn-remove-from-cart');
         if(removeBtn){
             const card = removeBtn.closest('.product-card');
@@ -87,8 +97,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const size = card.querySelector('.size-btn.active').dataset.size;
             const sugar = card.querySelector('.sugar-btn.active').dataset.sugar;
             const key = `${id}_${size}_${sugar}`;
-            if(cart[key]){ cart[key].quantity--; if(cart[key].quantity<=0) delete cart[key]; }
-            renderCart(); updateStockUI(card); showToast('Item removed','info');
+
+            if(cart[key]){
+                cart[key].quantity--;
+                if(cart[key].quantity <= 0) delete cart[key];
+            }
+
+            renderCart();
+            updateStockUI(card);
+            showToast('Item removed','info');
         }
     });
 
@@ -97,12 +114,17 @@ document.addEventListener('DOMContentLoaded', function() {
         tbody.innerHTML='';
         let total=0;
         Object.values(cart).forEach(item=>{
+            const lineTotal = item.unit_price * item.quantity;
             tbody.innerHTML+=`<tr>
-                <td>${item.name}</td><td>${item.size}</td><td>${item.sugar}%</td>
-                <td>${item.quantity}</td><td>$${(item.price*item.quantity).toFixed(2)}</td>
+                <td>${item.name}</td>
+                <td>${item.size}</td>
+                <td>${item.sugar}%</td>
+                <td>${item.quantity}</td>
+                <td>$${lineTotal.toFixed(2)}</td>
             </tr>`;
-            total+=item.price*item.quantity;
+            total += lineTotal;
         });
+
         if(Object.keys(cart).length>0){
             tbody.innerHTML+=`<tr>
                 <td colspan="4" class="text-end fw-bold">Total:</td>
@@ -116,15 +138,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const baseStock = parseInt(card.dataset.quantity)||0;
         const used = Object.values(cart).filter(i=>i.id===id).reduce((sum,i)=>sum+i.quantity,0);
         const span = card.querySelector('.available-stock');
-        if(span) span.textContent = baseStock-used;
+        if(span) span.textContent = baseStock - used;
     }
 
-    // Checkout
+    // --- Checkout ---
     checkoutBtn.addEventListener('click', function(e){
         e.preventDefault();
         if(Object.keys(cart).length===0){ showToast('Cart empty','error'); return; }
 
-        const total = Object.values(cart).reduce((sum,i)=>sum+i.price*i.quantity,0);
+        const total = Object.values(cart).reduce((sum,i)=>sum+i.unit_price*i.quantity,0);
 
         Swal.fire({
             title:'Confirm Checkout',
@@ -152,7 +174,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         const c = document.querySelector(`.product-card[data-id="${pid}"]`);
                         if(c) c.querySelector('.available-stock').textContent = data.updated_stock[pid];
                     });
-                } else { showToast(data.message||'Checkout failed','error'); }
+                } else {
+                    showToast(data.message||'Checkout failed','error');
+                }
             })
             .catch(err=>{ console.error(err); showToast('Server error','error'); });
         });

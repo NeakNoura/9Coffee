@@ -3,100 +3,79 @@ namespace App\Http\Controllers\Admins;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Product\Product;
 use App\Models\RawMaterial;
-use App\Models\Product\Order;
-
 
 class RawMaterialController extends Controller
 {
-    // Show all raw materials
-    public function index()
-    {
+    public function viewRawMaterials() {
         $rawMaterials = RawMaterial::orderBy('id', 'asc')->get();
         return view('admins.stock', compact('rawMaterials'));
     }
 
-    // Update raw material quantity
-    public function update(Request $request, $id)
+    public function store(Request $request)
     {
         $request->validate([
+            'id' => 'required|integer|unique:raw_materials,id',
+            'name' => 'required|string|max:100|unique:raw_materials,name',
+            'unit' => 'required|string|max:10',
             'quantity' => 'required|integer|min:0',
         ]);
 
-        $material = RawMaterial::findOrFail($id);
-        $material->quantity = $request->quantity;
-        $material->save();
+        $material = RawMaterial::create($request->only('id','name','unit','quantity'));
 
-        return redirect()->route('admin.raw-material.stock')->with('success', 'Stock updated successfully!');
+        return response()->json($material);
     }
 
-    // Place an order using raw materials
-    public function orderProduct(Request $request)
+    public function updateMaterial(Request $request, $id)
     {
-        $product = Product::findOrFail($request->product_id);
-        $quantity = $request->quantity;
-
-        foreach ($product->rawMaterials as $material) {
-            if ($material->quantity < ($material->pivot->quantity_required * $quantity)) {
-                return back()->with('error', $material->name . ' is not enough!');
-            }
-        }
-
-        foreach ($product->rawMaterials as $material) {
-            $material->quantity -= $material->pivot->quantity_required * $quantity;
-            $material->save();
-        }
-
-        Order::create([
-            'product_id' => $product->id,
-            'quantity' => $quantity,
-            'price' => $product->price * $quantity,
-            'status' => 'Pending'
+        $material = RawMaterial::findOrFail($id);
+        $request->validate([
+            'name' => 'required|string|max:100|unique:raw_materials,name,'.$id,
+            'unit' => 'required|string|max:10',
         ]);
 
-        return back()->with('success', 'Order placed and stock updated!');
+        if ($request->has('new_id')) $material->id = $request->new_id;
+        $material->name = $request->name;
+        $material->unit = $request->unit;
+        $material->save();
+
+        return response()->json($material);
     }
 
-// Show raw material stock
-public function viewRawMaterials() {
-    $rawMaterials = RawMaterial::all();
-    return view('admins.stock', compact('rawMaterials'));
-}
+    public function addQuantity(Request $request, $id)
+    {
+        $request->validate(['quantity' => 'required|integer|min:1']);
+        $material = RawMaterial::findOrFail($id);
+        $material->quantity += $request->quantity;
+        $material->save();
 
+        return response()->json($material);
+    }
 
-// Update raw material quantity
-public function updateRawMaterial(Request $request, $id)
-{
-    $request->validate([
-        'quantity' => 'required|integer|min:0',
-    ]);
+    public function reduceQuantity(Request $request, $id)
+    {
+        $request->validate(['quantity' => 'required|integer|min:1']);
+        $material = RawMaterial::findOrFail($id);
 
-    $material = RawMaterial::findOrFail($id);
-    $material->quantity = $request->quantity;
-    $material->save();
+        if ($material->quantity < $request->quantity) {
+            return response()->json(['message'=>'Not enough stock!'], 400);
+        }
 
-    return redirect()->route('admin.raw-material.stock')->with('success', 'Stock updated successfully!');
-}
+        $material->quantity -= $request->quantity;
+        $material->save();
 
-public function addQuantity(Request $request, $id)
-{
-    $request->validate([
-        'quantity' => 'required|integer|min:1',
-    ]);
+        return response()->json($material);
+    }
 
-    $product = Product::findOrFail($id);
-    $product->quantity += $request->quantity;
-    $product->save();
+    public function deleteRawMaterial($id)
+    {
+        $material = RawMaterial::findOrFail($id);
 
-    return response()->json([
-        'success' => true,
-        'message' => "Added {$request->quantity} to {$product->name}",
-        'new_quantity' => $product->quantity
-    ]);
-}
+        if ($material->quantity > 0) {
+            return response()->json(['message'=>'Cannot delete material with stock'], 400);
+        }
 
-
-
-
+        $material->delete();
+        return response()->json(['success' => true]);
+    }
 }

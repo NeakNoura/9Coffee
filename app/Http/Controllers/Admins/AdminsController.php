@@ -21,12 +21,6 @@ class AdminsController extends Controller
         return view('home');
     }
 
-public function showReceipt($id)
-{
-    $order = Order::findOrFail($id);
-    return view('products.receipt', compact('order'));
-}
-
     public function viewLogin(){
         return view('admins.login');
     }

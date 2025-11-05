@@ -19,35 +19,27 @@ use App\Http\Controllers\Admins\BookingController;
 use App\Http\Controllers\Admins\ExpenseController;
 use App\Http\Controllers\Admins\OrderController;
 use App\Http\Controllers\Admins\ProductController;
-use App\Http\Models\Product\RawMaterial;
 use App\Http\Controllers\Admins\RawMaterialController;
 use App\Http\Controllers\Admins\ReportController;
 use App\Http\Controllers\Admins\StaffController;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
 
 // 🟢 Default Laravel auth
 Auth::routes();
 
 // 🟢 Public user pages
 Route::get('/', function () {return redirect()->route('view.login');});
-
-
-
-
-
     Route::middleware('guest:admin')->group(function () {
     Route::post('/login-user', [ProductsController::class, 'loginUser'])->name('login.user');
     Route::get('admin/login', [AdminsController::class, 'viewLogin'])->name('view.login');
     Route::post('admin/login', [AdminsController::class, 'checkLogin'])->name('check.login');
 });
+
+
+
 // 🔒 Protected admin routes
-Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
+    Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminsController::class, 'index'])->name('admins.dashboard');
     Route::post('/logout', [AdminsController::class, 'logout'])->name('admin.logout');
     Route::get('/all-users', [AdminsController::class, 'DisplayAllUsers'])->name('all.users');
@@ -58,16 +50,23 @@ Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
     Route::post('/update-admin/{id}', [AdminsController::class, 'updateAdmin'])->name('update.admins');
     Route::delete('/delete-admin/{id}', [AdminsController::class, 'deleteAdmin'])->name('delete.admin');
     Route::get('/help', [AdminsController::class, 'Help'])->name('admins.help');
-
-
-    Route::post('/products/{id}/add-quantity', [RawMaterialController::class, 'addQuantity'])->name('products.add-quantity');
-    Route::get('/stock', [RawMaterialController::class, 'viewRawMaterials'])->name('admin.raw-material.stock');
     Route::get('admin/low-stock', [ReportController::class, 'lowStock'])->name('admin.low.stock');
-    Route::patch('/raw-material/update/{id}', [RawMaterialController::class, 'update'])->name('admin.raw-material.update');
     Route::get('admin/reports/sales', [ReportController::class, 'salesReport'])->name('admin.sales.report');
-    Route::get('admin/low-stock', [ReportController::class, 'lowStock'])->name('admin.low.stock');
-Route::patch('/products/update-stock/{id}', [ReportController::class, 'updateStock'])
-    ->name('admin.product.update-stock');
+    Route::patch('/products/update-stock/{id}', [ReportController::class, 'updateStock'])->name('admin.product.update-stock');
+
+
+// ✅ Stock Management Routes
+Route::get('/stock', [RawMaterialController::class, 'viewRawMaterials'])->name('admin.raw-material.stock');
+
+Route::post('/raw-material/store', [RawMaterialController::class, 'store'])->name('raw-material.store');
+Route::patch('/raw-material/update/{id}', [RawMaterialController::class, 'updateMaterial'])->name('raw-material.update');
+Route::post('/raw-material/add/{id}', [RawMaterialController::class, 'addQuantity'])->name('raw-material.add');
+Route::post('/raw-material/reduce/{id}', [RawMaterialController::class, 'reduceQuantity'])->name('raw-material.reduce');
+Route::delete('/raw-material/delete/{id}', [RawMaterialController::class, 'deleteRawMaterial'])->name('raw-material.delete');
+Route::post('products/{id}/add-quantity', [ReportController::class, 'addQuantity'])
+    ->name('admin.products.add_quantity');
+
+
 
 
 
@@ -85,14 +84,14 @@ Route::patch('/products/update-stock/{id}', [ReportController::class, 'updateSto
     Route::delete('/delete-all-orders', [OrderController::class, 'DeleteAllOrders'])->name('delete.all.orders');
 
 
-// Products management
-Route::get('/all-products', [ProductController::class, 'DisplayProducts'])->name('all.products');
-Route::get('/create-products', [ProductController::class, 'CreateProducts'])->name('create.products');
-Route::post('/store-products', [ProductController::class, 'StoreProducts'])->name('store.products');
+    // Products management
+    Route::get('/all-products', [ProductController::class, 'DisplayProducts'])->name('all.products');
+    Route::get('/create-products', [ProductController::class, 'CreateProducts'])->name('create.products');
+    Route::post('/store-products', [ProductController::class, 'StoreProducts'])->name('store.products');
 
-// AJAX edit and delete
-Route::post('/products/{id}/edit-products', [ProductController::class, 'AjaxUpdateProducts'])->name('ajax.edit.products');
-Route::delete('/products/{id}/delete-products', [ProductController::class, 'DeleteProducts'])->name('ajax.delete.products');
+    // AJAX edit and delete
+    Route::post('/products/{id}/edit-products', [ProductController::class, 'AjaxUpdateProducts'])->name('ajax.edit.products');
+    Route::delete('/products/{id}/delete-products', [ProductController::class, 'DeleteProducts'])->name('ajax.delete.products');
 
     // Bookings management
     Route::get('/all-bookings', [BookingController::class, 'DisplayBookings'])->name('all.bookings');

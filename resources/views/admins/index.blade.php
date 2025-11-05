@@ -6,7 +6,7 @@
         <div class="navigation">
         <ul>
             <li>
-                <a href="{{ route('admins.dashboard') }}">
+                <a href="{{ route('all.admins') }}">
                     <span class="icon">
                         <ion-icon name="home"></ion-icon>
                     </span>
@@ -19,16 +19,45 @@
                     <span class="icon">
                         <ion-icon name="calendar-outline"></ion-icon>
                     </span>
-                    <span class="title">Bookings</span>
+                    <span class="title">Bookings Management</span>
                 </a>
             </li>
-
+                <li>
+                <a href="{{ route('all.orders') }}">
+                    <span class="icon">
+                        <ion-icon name="receipt-outline"></ion-icon>
+                    </span>
+                    <span class="title">Order Management</span>
+                </a>
+            </li>
+                <li>
+        <a href="{{ route('admin.raw-material.stock') }}">
+            <span class="icon"><ion-icon name="cube-outline"></ion-icon></span>
+            <span class="title">Ingredients Management</span>
+                </a>
+            </li>
             <li>
+                <a href="{{ route('all.products') }}">
+                    <span class="icon">
+                        <ion-icon name="cart-outline"></ion-icon>
+                    </span>
+                    <span class="title">Products Management</span>
+                </a>
+            </li>
+             <li>
+                <a href="{{ route('admin.low.stock') }}">
+                    <span class="icon">
+                        <ion-icon name="warning-outline"></ion-icon>
+                    </span>
+                    <span class="title">Stock Management</span>
+                </a>
+            </li>
+                    <li>
                 <a href="{{ route('admins.help') }}">
                     <span class="icon">
                         <ion-icon name="help-outline"></ion-icon>
                     </span>
-                    <span class="title">Help</span>
+                    <span class="title">Help </span>
                 </a>
             </li>
 
@@ -41,14 +70,7 @@
         </a>
     </li>
 
-            <li>
-                <a href="{{ route('all.products') }}">
-                    <span class="icon">
-                        <ion-icon name="cart-outline"></ion-icon>
-                    </span>
-                    <span class="title">Products</span>
-                </a>
-            </li>
+
 
             <li>
                 <a href="{{ route('staff.sell.form') }}">
@@ -59,20 +81,7 @@
                 </a>
             </li>
 
-            <li>
-                <a href="{{ route('all.orders') }}">
-                    <span class="icon">
-                        <ion-icon name="receipt-outline"></ion-icon>
-                    </span>
-                    <span class="title">Order Management</span>
-                </a>
-            </li>
-                <li>
-        <a href="{{ route('admin.raw-material.stock') }}">
-            <span class="icon"><ion-icon name="cube-outline"></ion-icon></span>
-            <span class="title">Stock</span>
-        </a>
-    </li>
+
                 <li>
         <a href="{{ route('admin.sales.report') }}">
             <span class="icon">
@@ -82,14 +91,7 @@
         </a>
     </li>
 
-    <li>
-        <a href="{{ route('admin.low.stock') }}">
-            <span class="icon">
-                <ion-icon name="warning-outline"></ion-icon>
-            </span>
-            <span class="title">Low Stock</span>
-        </a>
-    </li>
+
 
     <li>
         <a href="{{ route('admin.expenses') }}">
