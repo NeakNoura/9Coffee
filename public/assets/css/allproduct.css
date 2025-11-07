@@ -7,15 +7,16 @@
 
 /* Card */
 .cafe-card {
-    background: #3e2f2f;
+    background: #3e2f2f; /* Dark brown */
     color: #f5f5f5;
     border: 1px solid #6b4c3b;
     padding: 20px;
+    border-radius: 12px;
 }
 
 /* Page Title */
 .text-cafe-title {
-    color: #db770c;
+    color: #db770c; /* Gold/Orange */
     font-weight: 700;
     font-size: 1.8rem;
 }
@@ -25,10 +26,12 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 .cafe-table thead {
-    background: #5a3d30;
+    background: #5a3d30; /* Darker brown */
     color: #fff;
     font-weight: 600;
 }
@@ -64,14 +67,15 @@
     color: #fff;
 }
 
-.btn-create {
+/* Limit to 4 main colors */
+.btn-create { /* Gold/Orange */
     background-color: #db770c;
 }
 .btn-create:hover {
     background-color: #b95f05;
 }
 
-.btn-edit {
+.btn-edit { /* Blue */
     background-color: #3498db;
     padding: 0.3rem 0.8rem;
 }
@@ -79,7 +83,7 @@
     background-color: #217dbb;
 }
 
-.btn-delete {
+.btn-delete { /* Red */
     background-color: #e74c3c;
     padding: 0.3rem 0.8rem;
 }
@@ -87,13 +91,21 @@
     background-color: #c0392b;
 }
 
-.btn-back {
-    background-color: #f5a623;
-    color: #3e2f2f;
-}
-.btn-back:hover {
+.btn-back { /* Gold/Orange */
     background-color: #db770c;
     color: #fff;
+}
+.btn-back:hover {
+    background-color: #b95f05;
+    color: #fff;
+}
+
+/* Optional secondary color for alerts or special buttons */
+.btn-secondary {
+    background-color: #6b4c3b; /* Dark brown */
+}
+.btn-secondary:hover {
+    background-color: #5a3d30;
 }
 
 /* Responsive adjustments */

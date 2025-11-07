@@ -18,8 +18,8 @@ public function StaffSellForm()
     $productsType = $products->groupBy(fn($p) => strtolower($p->type->name ?? 'others'));
     $types = ProductType::all();
     $subTypes = SubType::all();
-
-    return view('admins.staffSell', compact('products', 'productsType', 'types', 'subTypes'));
+    $earning = Order::sum('price');
+    return view('admins.staffSell', compact('products', 'productsType', 'types', 'subTypes', 'earning'));
 }
 
 

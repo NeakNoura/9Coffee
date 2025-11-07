@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Redirect;
 class OrderController extends Controller
 {
     public function DisplayAllOrders(){
-      $allOrders = Order::select()->orderBy('created_at','desc')->get();
+      $allOrders = Order::select()->orderBy('created_at','desc') ->paginate(10);;
 
         return view('admins.allorders',compact('allOrders'));
     }

@@ -16,11 +16,12 @@ use Illuminate\Support\Facades\Redirect;
             $products = Product::all();
             return view('admins.allproducts', compact('products'));
         }
-    public function DisplayProducts(){
-            $products = Product::select()->orderBy('id','asc')->get();
-                return view('admins.allproducts',compact('products'));
+public function DisplayProducts(){
+    $products = Product::with('productType', 'rawMaterials')->orderBy('id','asc')->get();
+    return view('admins.allproducts', compact('products'));
+}
 
-        }
+
 
     public function CreateProducts()
     {
@@ -41,7 +42,7 @@ public function StoreProducts(Request $request)
     $imageName = $request->image->getClientOriginalName();
     $request->image->move(public_path('assets/images/'), $imageName);
 
-    $product = Product::create([
+    Product::create([
         'name' => $request->name,
         'price' => $request->price,
         'product_type_id' => $request->product_type_id,
@@ -50,13 +51,8 @@ public function StoreProducts(Request $request)
         'quantity' => 0,
     ]);
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Product created successfully!',
-        'product' => $product
-    ]);
+    return redirect()->route('all.products')->with('success', 'Product created successfully!');
 }
-
 
 
     public function DeleteProducts($id)
@@ -95,5 +91,37 @@ public function AjaxUpdateProducts(Request $request, $id)
 
     return response()->json(['success'=>true, 'message'=>'Product updated successfully']);
 }
+public function getAllMaterialsForAssign($id)
+{
+    $product = Product::findOrFail($id);
+
+    $materials = \App\Models\RawMaterial::all()->map(function($mat) use ($product) {
+        $assignedQty = $product->rawMaterials()->where('raw_material_id', $mat->id)->first()?->pivot->quantity_required ?? 0;
+
+        return [
+            'id' => $mat->id,
+            'name' => $mat->name,
+            'unit' => $mat->unit,
+            'stock_quantity' => $mat->quantity,
+            'quantity_required' => $assignedQty, // already assigned qty
+        ];
+    });
+
+    return response()->json($materials);
+}
+
+
+
+
+
+public function addMaterials(Request $request, Product $product)
+{
+    $materials = $request->input('materials', []);
+    foreach ($materials as $id => $qty) {
+        $product->rawMaterials()->syncWithoutDetaching([$id => ['quantity_required' => $qty]]);
+    }
+    return response()->json(['success' => true, 'message' => 'Materials assigned successfully']);
+}
+
 
     }

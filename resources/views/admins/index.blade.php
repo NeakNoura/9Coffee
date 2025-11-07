@@ -8,9 +8,9 @@
             <li>
                 <a href="{{ route('all.admins') }}">
                     <span class="icon">
-                        <ion-icon name="home"></ion-icon>
+                        <ion-icon name="people"></ion-icon>
                     </span>
-                    <span class="title">Dashboard</span>
+                    <span class="title">Admin</span>
                 </a>
             </li>
 
@@ -195,7 +195,7 @@
                     <span class="badge
                         @if(strtolower($order->status)=='pending') bg-warning
                         @elseif(strtolower($order->status)=='cancelled') bg-danger
-                        @else bg-secondary
+                        @else bg-success
                         @endif px-3 py-1 rounded-pill">
                         {{ $order->status }}
                     </span>
@@ -216,9 +216,6 @@
             <!-- ================= Analytics Charts ================= -->
             <div class="analytics col-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h2>Analytics</h2>
-                    </div>
                     <div class="card-body">
                         <canvas id="analyticsChart" style="width:100%; height:500px;"></canvas>
                                 </div>

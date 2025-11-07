@@ -1,0 +1,139 @@
+
+/* Card and Table */
+.card {
+    background-color: #4b3a2f;
+    color: #f5f5f5;
+    border-radius: 12px;
+    border: 1px solid #3a2b27;
+}
+.card-header {
+    background-color: #db770c;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Table */
+table th {
+    background-color: #4b3a2f;
+    color: #fff;
+}
+table td {
+    background-color: #3e2f2f;
+    color: #f5f5f5;
+}
+table tr:hover td {
+    background-color: #5a3d30;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px;
+    font-weight: bold;
+    color: #fff;
+}
+
+/* Primary actions (Add, Update) */
+.btn.btn-success, .btn.btn-primary {
+    background-color: #db770c;
+    border: none;
+}
+.btn.btn-success:hover, .btn.btn-primary:hover {
+    background-color: #b36208;
+}
+
+/* Reduce (minor action) */
+.btn.btn-warning {
+    background-color: #f1c40f;
+    border: none;
+    color: #000;
+}
+.btn.btn-warning:hover {
+    background-color: #d4ac0d;
+}
+
+/* Delete (danger) */
+.btn.btn-danger {
+    background-color: #c0392b;
+    border: none;
+}
+.btn.btn-danger:hover {
+    background-color: #922b21;
+}
+
+/* Badges */
+.badge.bg-danger { background-color: #c0392b; }
+.badge.bg-success { background-color: #27ae60; }
+/* ------------------------- Table ------------------------- */
+.table-hover tbody tr:hover {
+    background-color: rgba(219, 119, 12, 0.1); /* subtle hover effect */
+}
+
+.table th, .table td {
+    vertical-align: middle !important;
+    border: 1px solid #6b4c3b;
+    padding: 0.75rem 1rem;
+}
+
+/* Table header */
+.table thead {
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+/* ------------------------- Badges ------------------------- */
+.badge {
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 1rem;
+    color: #fff !important;
+}
+
+.bg-success {
+    background-color: #28a745 !important;
+}
+
+.bg-danger {
+    background-color: #b02a37 !important;
+}
+
+/* ------------------------- Buttons ------------------------- */
+.btn-add-quantity,
+.btn-update-stock {
+    border-radius: 50px;
+    font-size: 0.85rem;
+    padding: 0.3rem 0.8rem;
+    transition: all 0.2s;
+}
+
+.btn-add-quantity:hover,
+.btn-update-stock:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+.btn-outline-success {
+    border: 1px solid #28a745;
+    color: #28a745;
+}
+
+.btn-outline-success:hover {
+    background-color: #28a745;
+    color: #fff;
+}
+
+/* ------------------------- Responsive ------------------------- */
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.85rem;
+    }
+
+    .btn-add-quantity,
+    .btn-update-stock {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.75rem;
+    }
+}
+.table-hover tbody tr:hover {
+    background-color: rgba(219, 119, 12, 0.15); /* soft caramel hover */
+}

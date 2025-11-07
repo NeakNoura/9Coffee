@@ -1,0 +1,80 @@
+/* Card Styling */
+.form-card {
+    background-color: #3b2d2d;
+    color: #fff;
+}
+
+.form-card-header {
+    background-color: #db770c;
+    color: #fff;
+    font-weight: 600;
+    text-align: center;
+    border-bottom: none;
+    border-radius: 0.5rem 0.5rem 0 0;
+    letter-spacing: 0.5px;
+}
+
+/* Form Inputs */
+.form-input {
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    background-color: #5c4033;
+    color: #fff;
+    border: 1px solid #6b4c3b;
+    transition: all 0.2s ease-in-out;
+}
+
+.form-input:focus {
+    outline: none;
+    background-color: #704c35;
+    box-shadow: 0 0 6px rgba(219, 119, 12, 0.6);
+    color: #fff;
+}
+
+.form-input::placeholder {
+    color: #d9c4b3;
+}
+
+/* Buttons */
+.btn-submit {
+    background-color: #db770c;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 50px;
+    padding: 0.65rem 1.2rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-submit:hover {
+    background-color: #ff9a3c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 154, 60, 0.4);
+}
+
+.btn-cancel {
+    background-color: #6b4c3b;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 50px;
+    padding: 0.65rem 1.2rem;
+}
+
+.btn-cancel:hover {
+    background-color: #805a45;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(128, 90, 69, 0.4);
+}
+
+/* Labels */
+.form-label {
+    color: #ffe5b4;
+    font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .btn-submit, .btn-cancel {
+        width: 100% !important;
+        margin-bottom: 0.5rem;
+    }
+}

@@ -51,15 +51,27 @@ public function salesReport()
 }
 public function lowStock()
 {
+    // Load all products with raw materials
     $allProducts = Product::with('rawMaterials')->get();
 
-    // Filter by calculated available_stock
-    $lowStockProducts = $allProducts->filter(function($product){
-        return $product->available_stock <= 5; // threshold
-    });
+    foreach ($allProducts as $product) {
+        $minStock = null;
 
-    return view('admins.low_stock', compact('lowStockProducts'));
+        foreach ($product->rawMaterials as $material) {
+            // How much of this product can be made from this material
+            if ($material->pivot->quantity_required > 0) {
+                $stockForThisMaterial = floor($material->quantity / $material->pivot->quantity_required);
+                $minStock = is_null($minStock) ? $stockForThisMaterial : min($minStock, $stockForThisMaterial);
+            }
+        }
+
+        $product->available_stock = $minStock ?? 0;
+    }
+
+    return view('admins.low_stock', compact('allProducts'));
 }
+
+
 public function addQuantity(Request $request, $id)
 {
     $request->validate([
@@ -67,13 +79,14 @@ public function addQuantity(Request $request, $id)
     ]);
 
     $product = Product::findOrFail($id);
+
     $product->quantity += $request->quantity;
     $product->save();
 
     return response()->json([
         'success' => true,
         'new_quantity' => $product->quantity,
-        'message' => $product->name . ' stock updated!',
+        'message' => $product->name . ' stock added!',
     ]);
 }
 

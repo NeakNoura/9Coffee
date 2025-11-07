@@ -107,6 +107,29 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('All Orders page loaded ✅');
+
+    // Handle delete confirmation
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', e => {
+            const orderName = btn.dataset.name || 'this order';
+            if (confirm(`Are you sure you want to delete ${orderName}?`)) {
+                btn.closest('form').submit();
+            }
+        });
+    });
+
+    // Change status (optional feature)
+    document.querySelectorAll('.btn-edit-status').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const orderId = btn.dataset.id;
+            const currentStatus = btn.dataset.status;
+            console.log(`Edit status for order ID: ${orderId}, current status: ${currentStatus}`);
+            // You can open a modal here if needed
+        });
+    });
+});
 
     // ---------- DELETE ALL ORDERS ----------
     const deleteAllBtn = document.querySelector('form[action$="delete.all.orders"] button');

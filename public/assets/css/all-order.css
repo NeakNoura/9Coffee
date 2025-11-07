@@ -1,0 +1,35 @@
+/* Pagination Styling for Orders Page */
+.pagination {
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination .page-link {
+    background-color: #3e2f2f;
+    color: #f5f5f5;
+    border: 1px solid #6b4c3b;
+    border-radius: 8px;
+    margin: 0 4px;
+    transition: all 0.2s ease-in-out;
+}
+
+.pagination .page-link:hover {
+    background-color: #db770c;
+    color: #fff;
+    border-color: #db770c;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #db770c;
+    border-color: #db770c;
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 0 5px rgba(219, 119, 12, 0.5);
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: #6b4c3b;
+    color: #bfbfbf;
+    border-color: #6b4c3b;
+    cursor: not-allowed;
+}

@@ -132,6 +132,21 @@ document.addEventListener('DOMContentLoaded', function() {
             </tr>`;
         }
     }
+// walletEl is the seller's wallet
+const walletEl = document.getElementById('wallet-balance');
+
+function updateWalletBalance(amount = 0) {
+    if(!walletEl) return;
+
+    // add amount to the seller's wallet
+    let currentBalance = parseFloat(walletEl.dataset.balance) || 0;
+    currentBalance += amount;
+
+    walletEl.dataset.balance = currentBalance.toFixed(2);
+    walletEl.textContent = '$' + currentBalance.toFixed(2);
+}
+
+
 
     function updateStockUI(card){
         const id = card.dataset.id;
@@ -142,43 +157,59 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- Checkout ---
-    checkoutBtn.addEventListener('click', function(e){
-        e.preventDefault();
-        if(Object.keys(cart).length===0){ showToast('Cart empty','error'); return; }
+ checkoutBtn.addEventListener('click', function(e){
+    e.preventDefault();
+    if(Object.keys(cart).length === 0){
+        showToast('Cart empty','error');
+        return;
+    }
 
-        const total = Object.values(cart).reduce((sum,i)=>sum+i.unit_price*i.quantity,0);
+    const total = Object.values(cart).reduce((sum,i)=>sum+i.unit_price*i.quantity,0);
 
-        Swal.fire({
-            title:'Confirm Checkout',
-            html:`<p>Total: <strong>$${total.toFixed(2)}</strong></p>`,
-            icon:'question',
-            showCancelButton:true,
-            confirmButtonText:'Confirm'
-        }).then(result=>{
-            if(!result.isConfirmed) return;
+    Swal.fire({
+        title:'Confirm Checkout',
+        html:`<p>Total: <strong>$${total.toFixed(2)}</strong></p>`,
+        icon:'question',
+        showCancelButton:true,
+        confirmButtonText:'Confirm'
+    }).then(result=>{
+        if(!result.isConfirmed) return;
 
-            const formData = new FormData();
-            formData.append('cart_data', JSON.stringify(cart));
-            formData.append('payment_method', document.querySelector('#payment_method').value);
-            formData.append('_token', document.querySelector('input[name="_token"]').value);
+        const formData = new FormData();
+        formData.append('cart_data', JSON.stringify(cart));
+        formData.append('payment_method', document.querySelector('#payment_method').value);
+        formData.append('_token', document.querySelector('input[name="_token"]').value);
 
-            fetch(document.querySelector('#checkout-form').action,{
-                method:'POST', body: formData
-            })
-            .then(res=>res.json())
-            .then(data=>{
-                if(data.success){
-                    showToast('Checkout successful!','success');
-                    cart={}; renderCart();
-                    Object.keys(data.updated_stock||{}).forEach(pid=>{
-                        const c = document.querySelector(`.product-card[data-id="${pid}"]`);
-                        if(c) c.querySelector('.available-stock').textContent = data.updated_stock[pid];
-                    });
-                } else {
-                    showToast(data.message||'Checkout failed','error');
-                }
-            })
-            .catch(err=>{ console.error(err); showToast('Server error','error'); });
+        fetch(document.querySelector('#checkout-form').action,{
+            method:'POST', body: formData
+        })
+        .then(res=>res.json())
+        .then(data=>{
+            if(data.success){
+                showToast('Checkout successful!','success');
+
+                // --- ADD total to seller's wallet ---
+                updateWalletBalance(total);
+
+                // --- RESET CART ---
+                cart={};
+                renderCart();
+
+                // --- UPDATE STOCK ---
+                Object.keys(data.updated_stock||{}).forEach(pid=>{
+                    const c = document.querySelector(`.product-card[data-id="${pid}"]`);
+                    if(c) c.querySelector('.available-stock').textContent = data.updated_stock[pid];
+                });
+
+            } else {
+                showToast(data.message||'Checkout failed','error');
+            }
+        })
+        .catch(err=>{
+            console.error(err);
+            showToast('Server error','error');
         });
     });
+});
+
 });

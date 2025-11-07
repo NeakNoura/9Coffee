@@ -37,52 +37,69 @@ $types = App\Models\ProductType::all();
 
             {{-- Table --}}
             <div class="table-responsive">
-                <table class="table cafe-table align-middle text-center">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Product</th>
-                            <th>Image</th>
-                            <th>Price</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php $counter = 1; @endphp
-                        @foreach ($products as $product)
-                        <tr>
-                            <th scope="row">{{ $counter }}</th>
-                            <td>{{ $product->name }}</td>
-                            <td>
-                                <img src="{{ asset('assets/images/'.$product->image) }}" alt="{{ $product->name }}" class="product-img">
-                            </td>
-                            <td>${{ number_format($product->price,2) }}</td>
-                          <td>
-    <button class="btn btn-edit"
+                <table class="table table-hover align-middle text-center" style="color:#f5f5f5;">
+    <thead style="background-color:#6b4c3b;">
+        <tr>
+            <th>#</th>
+            <th>Product Name</th>
+            <th>Image</th>
+            <th>Price</th>
+            <th>Type</th>
+            <th>Edit</th>
+            <th>Delete</th>
+            <th>Ingredient</th>
+        </tr>
+    </thead>
+    <tbody>
+        @php $counter = 1; @endphp
+        @foreach ($products as $product)
+        <tr style="border-bottom:1px solid #5a3d30;">
+            <th scope="row">{{ $counter }}</th>
+            <td>{{ $product->name }}</td>
+            <td>
+                <img src="{{ asset('assets/images/'.$product->image) }}"
+                     alt="{{ $product->name }}"
+                     style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border:1px solid #6b4c3b;">
+            </td>
+            <td>${{ number_format($product->price, 2) }}</td>
+<td>{{ $product->productType ? $product->productType->name : 'N/A' }}</td>
+            <td>
+                <button type="button"
+        class="btn btn-info btn-sm rounded-pill btn-edit"
         data-id="{{ $product->id }}"
         data-name="{{ $product->name }}"
         data-price="{{ $product->price }}"
-        data-url="{{ route('ajax.edit.products', $product->id) }}">
-        Edit
+        data-type="{{ $product->productType ? $product->productType->name : '' }}">
+    Edit
+</button>
+
+            </td>
+            <td>
+                <button type="button"
+                        class="btn btn-danger btn-sm rounded-pill btn-delete"
+                        data-id="{{ $product->id }}"
+                        data-name="{{ $product->name }}">
+                    Delete
+                </button>
+            </td>
+            <td>
+    <button class="btn btn-primary btn-sm btnAssignRecipe"
+        data-product-id="{{ $product->id }}">
+        Assign Recipe
+    </button>
+
+    <button class="btn btn-sm btn-info btnViewRecipe"
+        data-url="{{ route('admin.product.getAssignedMaterials', $product->id) }}">
+        View Assigned
     </button>
 </td>
 
-<td>
-    <button class="btn btn-delete"
-        data-id="{{ $product->id }}"
-        data-name="{{ $product->name }}"
-        data-price="{{ $product->price }}"
-        data-url="{{ route('ajax.delete.products', $product->id) }}">
-        Delete
-    </button>
-</td>
+        </tr>
+        @php $counter++; @endphp
+        @endforeach
+    </tbody>
+</table>
 
-                        </tr>
-                        @php $counter++; @endphp
-                        @endforeach
-                    </tbody>
-                </table>
             </div>
 
             <a href="{{ route('admins.dashboard') }}" class="btn btn-back mt-4">

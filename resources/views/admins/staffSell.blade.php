@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+<link rel="stylesheet" href="{{ asset('assets/css/staff-sell.css') }}">
+
 <div class="container-fluid mt-4 px-4">
     <div class="row">
 
@@ -24,13 +26,13 @@
                 {{-- Filters --}}
                 <div class="row mt-3 mb-2">
                     <div class="col-md-12">
-                        <div class="mb-2">
+                        {{-- <div class="mb-2">
                             <strong class="text-white me-2">Filter Type:</strong>
                             <button class="btn btn-outline-light filter-btn active" data-type="all">All</button>
                             @foreach($types as $type)
                                 <button class="btn btn-outline-light filter-btn" data-type="{{ $type->id }}">{{ $type->name }}</button>
                             @endforeach
-                        </div>
+                        </div> --}}
                         <div class="mb-2">
                             <strong class="text-warning me-2">Filter Sub-Type:</strong>
                             <button class="btn btn-outline-warning filter-sub-btn active" data-subtype="all">All</button>
@@ -89,11 +91,23 @@
             </div>
         </div>
 
-        {{-- Cart & Checkout (Right) --}}
         <div class="col-md-4">
             <div class="card shadow-sm border-0 rounded-4 p-3" style="background:#3e2f2f; color:#f5f5f5;">
                 <h4 class="text-center">Cart</h4>
-                <div class="table-responsive" style="max-height:60vh; overflow-y:auto; border:1px solid #6b4c3b;">
+                {{-- Wallet Balance --}}
+                {{-- Wallet Balance --}}
+                <div class="card mb-3 p-3 rounded" style="background:#5a3d30; color:#fff;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <p class="mb-0">
+                            Wallet Balance:
+                            <span id="wallet-balance" data-balance="{{ $earning }}">
+                                ${{ $earning }}
+                            </span>
+                        </p>
+                        <i class="bi bi-wallet2 fs-2 text-warning"></i>
+                    </div>
+                </div>
+                    <div class="table-responsive" style="max-height:60vh; overflow-y:auto; border:1px solid #6b4c3b;">
                     <table class="table table-hover align-middle text-white mb-0" id="cart-table">
                         <thead style="background-color: #5a3d30;" class="text-center sticky-top">
                             <tr>

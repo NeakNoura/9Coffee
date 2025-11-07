@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+<link rel="stylesheet" href="{{ asset('assets/css/raw-material.css') }}">
+
 <button id="btnAddMaterial" class="btn btn-primary" data-url="{{ route('raw-material.store') }}">
     ➕ Add New Raw Ingredient
 </button>
@@ -29,69 +31,60 @@
                     </thead>
 
                     <tbody class="text-center">
-                        @foreach($rawMaterials as $material)
-                        @php
-                            $displayQty = $material->quantity;
-                            $displayUnit = $material->unit;
-                            // Optional conversion logic
-                            // if ($displayUnit == 'g' && $displayQty >= 1000) {
-                            //     $displayQty = $displayQty / 1000;
-                            //     $displayUnit = 'kg';
-                            // }
-                            // if ($displayUnit == 'ml' && $displayQty >= 1000) {
-                            //     $displayQty = $displayQty / 1000;
-                            //     $displayUnit = 'L';
-                            // }
-                        @endphp
+    @foreach($rawMaterials as $index => $material)
+    <tr>
+        {{-- Visual numbering only --}}
+        <td>{{ $index + 1 }}</td>
 
-                        <tr>
-                            <td id="displayId{{ $material->id }}">{{ $material->id }}</td>
-                            <td id="displayName{{ $material->id }}">{{ $material->name }}</td>
-                            <td id="displayQty{{ $material->id }}">{{ number_format($displayQty, 2) }}</td>
-                            <td id="displayUnit{{ $material->id }}">{{ $displayUnit }}</td>
-                            <td>
-                                <span class="badge {{ $material->quantity < 5 ? 'bg-danger' : 'bg-success' }}">
-                                    {{ $material->quantity < 5 ? 'Low' : 'OK' }}
-                                </span>
-                            </td>
-                            <td>
-                                <button
-                                    class="btn btn-success btnAddStock"
-                                    data-id="{{ $material->id }}"
-                                    data-name="{{ $material->name }}"
-                                    data-unit="{{ $material->unit }}"
-                                >➕ Add</button>
+        {{-- Material info --}}
+        <td id="displayName{{ $material->id }}">{{ $material->name }}</td>
+        <td id="displayQty{{ $material->id }}">{{ number_format($material->quantity, 2) }}</td>
+        <td id="displayUnit{{ $material->id }}">{{ $material->unit }}</td>
+        <td>
+            <span class="badge {{ $material->quantity < 5 ? 'bg-danger' : 'bg-success' }}">
+                {{ $material->quantity < 5 ? 'Low' : 'OK' }}
+            </span>
+        </td>
 
-                                <button
-                                    class="btn btn-warning btnReduceStock"
-                                    data-id="{{ $material->id }}"
-                                    data-name="{{ $material->name }}"
-                                    data-unit="{{ $material->unit }}"
-                                >➖ Reduce</button>
+        {{-- Buttons — keep the real ID here! --}}
+        <td>
+            <button class="btn btn-success btnAddStock"
+                data-id="{{ $material->id }}"
+                data-name="{{ $material->name }}"
+                data-unit="{{ $material->unit }}">
+                ➕ Add
+            </button>
 
-                                <button
-                                    class="btn btn-primary btnUpdateMaterial"
-                                    data-id="{{ $material->id }}"
-                                    data-name="{{ $material->name }}"
-                                    data-unit="{{ $material->unit }}"
-                                >🔄 Update</button>
+            <button class="btn btn-warning btnReduceStock"
+                data-id="{{ $material->id }}"
+                data-name="{{ $material->name }}"
+                data-unit="{{ $material->unit }}">
+                ➖ Reduce
+            </button>
 
-                                <button
-                                    type="button"
-                                    class="btn btn-danger btnDeleteMaterial"
-                                    data-id="{{ $material->id }}"
-                                    data-name="{{ $material->name }}"
-                                >🗑 Delete</button>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
+            <button class="btn btn-primary btnUpdateMaterial"
+                data-id="{{ $material->id }}"
+                data-name="{{ $material->name }}"
+                data-unit="{{ $material->unit }}">
+                🔄 Update
+            </button>
+
+            <button class="btn btn-danger btnDeleteMaterial"
+                data-id="{{ $material->id }}"
+                data-name="{{ $material->name }}">
+                🗑 Delete
+            </button>
+        </td>
+    </tr>
+    @endforeach
+</tbody>
+
                 </table>
             </div>
 
-            <a href="{{ route('admins.dashboard') }}" class="btn btn-light mt-3" style="color:#3e2f2f;">
-                <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
-            </a>
+            <a href="javascript:history.back()" class="btn btn-outline-light fw-bold">
+                    <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+                </a>
         </div>
     </div>
 </div>

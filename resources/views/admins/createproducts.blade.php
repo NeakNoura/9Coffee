@@ -3,13 +3,17 @@
 @section('content')
 <div class="container mt-5 pt-5">
 
-    {{-- Flash Messages --}}
-    @if(Session::has('success'))
-        <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm" role="alert">
-            {{ Session::get('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
+  @if(Session::has('success'))
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: '{{ Session::get('success') }}',
+        confirmButtonColor: '#db770c'
+    });
+</script>
+@endif
 
     {{-- Product Form --}}
     <div class="card shadow-lg border-0 rounded-4 mb-5 form-card">
@@ -70,91 +74,6 @@
     </div>
 </div>
 
-{{-- Custom CSS --}}
-<style>
-/* Card Styling */
-.form-card {
-    background: linear-gradient(135deg, #3e2f2f, #5a3d30);
-    color: #fff;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
+<link rel="stylesheet" href="{{ asset('assets/css/admin-products.css') }}">
 
-.form-card-header {
-    background: linear-gradient(90deg, #db770c, #ff9a3c);
-    color: #fff;
-    font-weight: 600;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-    border-bottom: none;
-    border-radius: 15px 15px 0 0;
-}
-
-/* Form Inputs */
-.form-input {
-    border-radius: 12px;
-    padding: 12px 18px;
-    background-color: #5c4033;
-    color: #fff;
-    border: none;
-    transition: all 0.3s ease;
-}
-
-.form-input:focus {
-    outline: none;
-    background-color: #704c35;
-    box-shadow: 0 0 8px rgba(219, 119, 12, 0.8);
-    color: #fff;
-}
-
-/* Placeholder color */
-.form-input::placeholder {
-    color: #d9c4b3;
-    opacity: 1;
-}
-
-/* Buttons */
-.btn-submit {
-    background: linear-gradient(90deg, #ff7e5f, #feb47b);
-    color: #fff;
-    font-weight: 700;
-    text-transform: uppercase;
-    border-radius: 50px;
-    padding: 12px 0;
-    transition: all 0.3s ease;
-}
-.btn-submit:hover {
-    background: linear-gradient(90deg, #feb47b, #ff7e5f);
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(255, 126, 95, 0.5);
-}
-
-.btn-cancel {
-    background: #444;
-    color: #fff;
-    font-weight: 700;
-    text-transform: uppercase;
-    border-radius: 50px;
-    padding: 12px 0;
-    transition: all 0.3s ease;
-}
-.btn-cancel:hover {
-    background: #666;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-}
-
-/* Label Styling */
-.form-label {
-    color: #ffe5b4;
-    font-weight: 600;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .btn-submit, .btn-cancel {
-        width: 100% !important;
-        margin-bottom: 10px;
-    }
-}
-</style>
 @endsection

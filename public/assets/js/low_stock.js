@@ -35,16 +35,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     body: JSON.stringify({ quantity: qtyToAdd })
                 })
-                .then(res => res.json())
-                .then(data => {
-                    if(data.success){
+                .then(async res => {
+                    let data;
+                    try {
+                        data = await res.json();
+                    } catch (err) {
+                        throw new Error('Invalid server response');
+                    }
+
+                    if(res.ok && data.success){
                         Swal.fire('Added!', data.message, 'success');
                         document.getElementById(`qty-${productId}`).textContent = data.new_quantity;
                     } else {
-                        Swal.fire('Error', data.message, 'error');
+                        Swal.fire('Error', data?.message || 'Something went wrong', 'error');
                     }
                 })
-                .catch(err => Swal.fire('Error', 'Something went wrong', 'error'));
+                .catch(err => Swal.fire('Error', err.message, 'error'));
             }
         });
     });

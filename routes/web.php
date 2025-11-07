@@ -92,6 +92,18 @@ Route::post('products/{id}/add-quantity', [ReportController::class, 'addQuantity
     // AJAX edit and delete
     Route::post('/products/{id}/edit-products', [ProductController::class, 'AjaxUpdateProducts'])->name('ajax.edit.products');
     Route::delete('/products/{id}/delete-products', [ProductController::class, 'DeleteProducts'])->name('ajax.delete.products');
+// Admin product routes
+Route::prefix('admin/product')->name('admin.product.')->group(function () {
+    // Get assigned materials for a product
+    Route::get('{product}/assigned-materials', [\App\Http\Controllers\Admins\ProductController::class, 'getAllMaterialsForAssign'])
+        ->name('getAssignedMaterials');
+
+    // Save assigned materials
+    Route::post('{product}/materials', [\App\Http\Controllers\Admins\ProductController::class, 'addMaterials'])
+        ->name('addMaterials');
+});
+
+
 
     // Bookings management
     Route::get('/all-bookings', [BookingController::class, 'DisplayBookings'])->name('all.bookings');

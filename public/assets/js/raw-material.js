@@ -1,12 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+    const token = document.querySelector('meta[name="csrf-token"]').content;
+
     function attachMaterialListeners(row) {
         const btnAdd = row.querySelector('.btnAddStock');
         const btnReduce = row.querySelector('.btnReduceStock');
         const btnUpdate = row.querySelector('.btnUpdateMaterial');
         const btnDelete = row.querySelector('.btnDeleteMaterial');
-
-        const token = document.querySelector('meta[name="csrf-token"]').content;
 
         // --- ADD STOCK ---
         if (btnAdd) {
@@ -35,9 +35,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                     .then(res => res.json())
                     .then(data => {
-                        row.querySelector(`#displayQty${data.id}`).textContent = parseFloat(data.quantity).toFixed(2);
-                        row.querySelector('span.badge').className = data.quantity < 5 ? 'badge bg-danger' : 'badge bg-success';
-                        row.querySelector('span.badge').textContent = data.quantity < 5 ? 'Low' : 'OK';
+                        const qtyCell = row.querySelector(`#displayQty${data.id}`);
+                        const badge = row.querySelector('span.badge');
+                        if (qtyCell) qtyCell.textContent = parseFloat(data.quantity).toFixed(2);
+                        if (badge) {
+                            badge.className = data.quantity < 5 ? 'badge bg-danger' : 'badge bg-success';
+                            badge.textContent = data.quantity < 5 ? 'Low' : 'OK';
+                        }
                         Swal.fire('Success', 'Stock added!', 'success');
                     })
                     .catch(err => Swal.fire('Error', err.message, 'error'));
@@ -71,13 +75,17 @@ document.addEventListener("DOMContentLoaded", () => {
                         body: JSON.stringify({ quantity: result.value })
                     })
                     .then(res => {
-                        if(!res.ok) throw new Error('Not enough stock!');
+                        if (!res.ok) throw new Error('Not enough stock!');
                         return res.json();
                     })
                     .then(data => {
-                        row.querySelector(`#displayQty${data.id}`).textContent = parseFloat(data.quantity).toFixed(2);
-                        row.querySelector('span.badge').className = data.quantity < 5 ? 'badge bg-danger' : 'badge bg-success';
-                        row.querySelector('span.badge').textContent = data.quantity < 5 ? 'Low' : 'OK';
+                        const qtyCell = row.querySelector(`#displayQty${data.id}`);
+                        const badge = row.querySelector('span.badge');
+                        if (qtyCell) qtyCell.textContent = parseFloat(data.quantity).toFixed(2);
+                        if (badge) {
+                            badge.className = data.quantity < 5 ? 'badge bg-danger' : 'badge bg-success';
+                            badge.textContent = data.quantity < 5 ? 'Low' : 'OK';
+                        }
                         Swal.fire('Success', 'Stock reduced!', 'success');
                     })
                     .catch(err => Swal.fire('Error', err.message, 'error'));
@@ -110,24 +118,17 @@ document.addEventListener("DOMContentLoaded", () => {
                         return { newId, newName, newUnit };
                     }
                 }).then(result => {
-                    if(!result.isConfirmed) return;
+                    if (!result.isConfirmed) return;
                     const { newId, newName, newUnit } = result.value;
 
-                   const formData = new FormData();
-formData.append('name', newName);
-formData.append('unit', newUnit);
-if(newId !== parseInt(id)) formData.append('new_id', newId);
-
-fetch(`/admin/raw-material/update/${id}`, {
-    method: 'PATCH',
-    headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': token
-    },
-    body: JSON.stringify({ name: newName, unit: newUnit, new_id: newId !== parseInt(id) ? newId : undefined })
-})
-
-
+                    fetch(`/admin/raw-material/update/${id}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': token
+                        },
+                        body: JSON.stringify({ name: newName, unit: newUnit, new_id: newId !== parseInt(id) ? newId : undefined })
+                    })
                     .then(res => res.json())
                     .then(data => {
                         row.cells[0].textContent = data.id;
@@ -138,9 +139,9 @@ fetch(`/admin/raw-material/update/${id}`, {
                             b.dataset.name = data.name;
                             b.dataset.unit = data.unit;
                         });
-                        Swal.fire('Success','Material updated!','success');
+                        Swal.fire('Success', 'Material updated!', 'success');
                     })
-                    .catch(err => Swal.fire('Error', err.message,'error'));
+                    .catch(err => Swal.fire('Error', err.message, 'error'));
                 });
             });
         }
@@ -149,8 +150,13 @@ fetch(`/admin/raw-material/update/${id}`, {
         if (btnDelete) {
             btnDelete.addEventListener('click', () => {
                 const { id, name } = btnDelete.dataset;
-               const qty = parseFloat(row.querySelector(`#displayQty${id}`).textContent);
-if (qty > 0) { Swal.fire('Error','Cannot delete material with stock','error'); return; }
+                const qtyCell = row.querySelector(`#displayQty${id}`);
+                const qty = qtyCell ? parseFloat(qtyCell.textContent) : 0;
+
+                if (qty > 0) {
+                    Swal.fire('Error', 'Cannot delete material with stock', 'error');
+                    return;
+                }
 
                 Swal.fire({
                     title: `Delete "${name}"?`,
@@ -159,7 +165,7 @@ if (qty > 0) { Swal.fire('Error','Cannot delete material with stock','error'); r
                     showCancelButton: true,
                     confirmButtonText: 'Delete'
                 }).then(result => {
-                    if(!result.isConfirmed) return;
+                    if (!result.isConfirmed) return;
 
                     fetch(`/admin/raw-material/delete/${id}`, {
                         method: 'DELETE',
@@ -168,86 +174,82 @@ if (qty > 0) { Swal.fire('Error','Cannot delete material with stock','error'); r
                     .then(res => res.json())
                     .then(() => {
                         row.remove();
-                        Swal.fire('Deleted!','Material removed','success');
-                    }).catch(err => Swal.fire('Error', err.message,'error'));
+                        Swal.fire('Deleted!', 'Material removed', 'success');
+                    })
+                    .catch(err => Swal.fire('Error', err.message, 'error'));
                 });
             });
         }
     }
 
     // --- ADD NEW MATERIAL ---
-const token = document.querySelector('meta[name="csrf-token"]').content;
-
-const btnAddMaterial = document.getElementById('btnAddMaterial');
-if (btnAddMaterial) {
-    btnAddMaterial.addEventListener('click', () => {
-        Swal.fire({
-            title: 'Add Raw Material',
-            html: `
-                <input type="number" id="rm_id" class="swal2-input" placeholder="ID">
-                <input type="text" id="rm_name" class="swal2-input" placeholder="Name">
-                <select id="rm_unit" class="swal2-input">
-                    <option value="g">Gram (g)</option>
-                    <option value="ml">Milliliter (ml)</option>
-                    <option value="pcs">Pieces (pcs)</option>
-                </select>
-            `,
-            showCancelButton: true,
-            confirmButtonText: 'Save',
-            preConfirm: () => {
-                const id = parseInt(document.getElementById('rm_id').value);
-                const name = document.getElementById('rm_name').value.trim();
-                const unit = document.getElementById('rm_unit').value;
-                if (!id || !name) Swal.showValidationMessage('Fill all fields');
-                return { id, name, unit };
-            }
-        }).then(result => {
-            if (!result.isConfirmed) return;
-            const { id, name, unit } = result.value;
-
-            fetch(btnAddMaterial.dataset.url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': token
-                },
-                body: JSON.stringify({ id, name, unit, quantity: 0 })
-            })
-            .then(res => {
-                // Handle validation errors
-                if (!res.ok) {
-                    return res.json().then(err => {
-                        throw new Error(Object.values(err.errors || {}).flat().join(', ') || err.message);
-                    });
+    const btnAddMaterial = document.getElementById('btnAddMaterial');
+    if (btnAddMaterial) {
+        btnAddMaterial.addEventListener('click', () => {
+            Swal.fire({
+                title: 'Add Raw Material',
+                html: `
+                    <input type="number" id="rm_id" class="swal2-input" placeholder="ID">
+                    <input type="text" id="rm_name" class="swal2-input" placeholder="Name">
+                    <select id="rm_unit" class="swal2-input">
+                        <option value="g">Gram (g)</option>
+                        <option value="ml">Milliliter (ml)</option>
+                        <option value="pcs">Pieces (pcs)</option>
+                    </select>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Save',
+                preConfirm: () => {
+                    const id = parseInt(document.getElementById('rm_id').value);
+                    const name = document.getElementById('rm_name').value.trim();
+                    const unit = document.getElementById('rm_unit').value;
+                    if (!id || !name) Swal.showValidationMessage('Fill all fields');
+                    return { id, name, unit };
                 }
-                return res.json();
-            })
-            .then(data => {
-                const tbody = document.querySelector('table tbody');
-                const newRow = document.createElement('tr');
-                newRow.innerHTML = `
-                    <td>${data.id}</td>
-                    <td id="displayName${data.id}">${data.name}</td>
-                    <td id="displayQty${data.id}">${data.quantity.toFixed(2)}</td>
-                    <td id="displayUnit${data.id}">${data.unit}</td>
-                    <td><span class="badge ${data.quantity < 5 ? 'bg-danger' : 'bg-success'}">${data.quantity < 5 ? 'Low' : 'OK'}</span></td>
-                    <td>
-                        <button class="btn btn-success btnAddStock" data-id="${data.id}" data-name="${data.name}" data-unit="${data.unit}">➕ Add</button>
-                        <button class="btn btn-warning btnReduceStock" data-id="${data.id}" data-name="${data.name}" data-unit="${data.unit}">➖ Reduce</button>
-                        <button class="btn btn-primary btnUpdateMaterial" data-id="${data.id}" data-name="${data.name}" data-unit="${data.unit}">🔄 Update</button>
-                        <button class="btn btn-danger btnDeleteMaterial" data-id="${data.id}" data-name="${data.name}">🗑 Delete</button>
-                    </td>
-                `;
-                tbody.appendChild(newRow);
-                attachMaterialListeners(newRow); // Reattach listeners
-                Swal.fire('Success', 'Raw material added!', 'success');
-            })
-            .catch(err => Swal.fire('Error', err.message, 'error'));
+            }).then(result => {
+                if (!result.isConfirmed) return;
+                const { id, name, unit } = result.value;
+
+                fetch(btnAddMaterial.dataset.url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token
+                    },
+                    body: JSON.stringify({ id, name, unit, quantity: 0 })
+                })
+                .then(res => {
+                    if (!res.ok) {
+                        return res.json().then(err => {
+                            throw new Error(Object.values(err.errors || {}).flat().join(', ') || err.message);
+                        });
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    const tbody = document.querySelector('table tbody');
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>${data.id}</td>
+                        <td id="displayName${data.id}">${data.name}</td>
+                        <td id="displayQty${data.id}">${data.quantity.toFixed(2)}</td>
+                        <td id="displayUnit${data.id}">${data.unit}</td>
+                        <td><span class="badge ${data.quantity < 5 ? 'bg-danger' : 'bg-success'}">${data.quantity < 5 ? 'Low' : 'OK'}</span></td>
+                        <td>
+                            <button class="btn btn-success btnAddStock" data-id="${data.id}" data-name="${data.name}" data-unit="${data.unit}">➕ Add</button>
+                            <button class="btn btn-warning btnReduceStock" data-id="${data.id}" data-name="${data.name}" data-unit="${data.unit}">➖ Reduce</button>
+                            <button class="btn btn-primary btnUpdateMaterial" data-id="${data.id}" data-name="${data.name}" data-unit="${data.unit}">🔄 Update</button>
+                            <button class="btn btn-danger btnDeleteMaterial" data-id="${data.id}" data-name="${data.name}">🗑 Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(newRow);
+                    attachMaterialListeners(newRow);
+                    Swal.fire('Success', 'Raw material added!', 'success');
+                })
+                .catch(err => Swal.fire('Error', err.message, 'error'));
+            });
         });
-    });
-}
-
-
+    }
 
     // Attach listeners to all existing rows
     document.querySelectorAll('table tbody tr').forEach(row => attachMaterialListeners(row));

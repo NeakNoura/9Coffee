@@ -1,0 +1,110 @@
+/* ----- POS Button Styling ----- */
+.staff-sell-section .btn {
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+/* Filter buttons */
+.staff-sell-section .filter-btn {
+    background-color: #6b4c3b;
+    color: #f5f5f5;
+    border: 1px solid #8b5e3c;
+    margin-right: 5px;
+}
+
+.staff-sell-section .filter-btn.active,
+.staff-sell-section .filter-btn:hover {
+    background-color: #db770c;
+    color: #fff;
+    border-color: #db770c;
+}
+
+/* Filter Sub-Type Buttons */
+.staff-sell-section .filter-sub-btn {
+    background-color: #5a3d30;
+    color: #f5f5f5;
+    border: 1px solid #8b5e3c;
+    margin-right: 5px;
+}
+
+.staff-sell-section .filter-sub-btn.active,
+.staff-sell-section .filter-sub-btn:hover {
+    background-color: #ffb74d;
+    color: #3e2f2f;
+    border-color: #ffb74d;
+}
+
+/* Size Buttons */
+.size-btn {
+    background-color: #4b3a2f;
+    color: #f5f5f5;
+    border: 1px solid #6b4c3b;
+}
+
+.size-btn.active,
+.size-btn:hover {
+    background-color: #db770c;
+    color: #fff;
+    border-color: #db770c;
+}
+
+/* Sugar Buttons */
+.sugar-btn {
+    background-color: #3e2f2f;
+    color: #ffc107;
+    border: 1px solid #6b4c3b;
+}
+
+.sugar-btn.active,
+.sugar-btn:hover {
+    background-color: #ffb74d;
+    color: #3e2f2f;
+    border-color: #ffb74d;
+}
+
+/* Add / Remove Cart Buttons */
+.btn-add-to-cart {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.btn-add-to-cart:hover {
+    background-color: #218838;
+}
+
+.btn-remove-from-cart {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.btn-remove-from-cart:hover {
+    background-color: #c82333;
+}
+
+/* Checkout Button */
+#checkout {
+    background-color: #ffb74d;
+    color: #3e2f2f;
+    font-weight: 700;
+}
+
+#checkout:hover {
+    background-color: #db770c;
+    color: #fff;
+}
+
+/* Low Stock Badge */
+.badge.bg-danger {
+    background-color: #c0392b !important;
+    color: #fff;
+}
+
+/* Table */
+#cart-table th {
+    background-color: #4b3a2f !important;
+}
+
+#cart-table td {
+    vertical-align: middle;
+}

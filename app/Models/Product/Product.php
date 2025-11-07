@@ -28,6 +28,11 @@ public function type() {
     return $this->belongsTo(ProductType::class, 'product_type_id');
 }
 
+public function productType() {
+    return $this->type(); // alias
+}
+
+
 public function subType() {
     return $this->belongsTo(SubType::class, 'sub_type_id');
 }
