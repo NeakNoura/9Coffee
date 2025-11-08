@@ -86,6 +86,18 @@ public function staffCheckout(Request $request)
             // Deduct stock
             $product->quantity -= $item['quantity'];
             $product->save();
+        foreach($product->rawMaterials as $material){
+            $requiredQty = $material->pivot->quantity_required * $item['quantity']; // total needed
+            if($material->quantity < $requiredQty){
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => "Not enough stock of {$material->name} for {$product->name}"
+                ]);
+            }
+            $material->quantity -= $requiredQty;
+            $material->save();
+        }
 
             // Total line price
             $lineTotal = $item['unit_price'] * $item['quantity'];

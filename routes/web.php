@@ -1,16 +1,9 @@
 
 <?php
 use Illuminate\Support\Facades\Route;
-use BaconQrCode\Renderer\Image\RendererStyle\RendererStyle;
-use BaconQrCode\Renderer\Image\GdImageBackEnd;
-use BaconQrCode\Renderer\ImageRenderer;
-use BaconQrCode\Writer;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Products\ProductsController;
 use App\Http\Controllers\Admins\AdminsController;
-use App\Http\Controllers\Users\UsersController;
-use App\Http\Controllers\HomeController;
 use App\Exports\SalesReportExport;
 use App\Exports\OrdersExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -22,7 +15,6 @@ use App\Http\Controllers\Admins\ProductController;
 use App\Http\Controllers\Admins\RawMaterialController;
 use App\Http\Controllers\Admins\ReportController;
 use App\Http\Controllers\Admins\StaffController;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 
 // 🟢 Default Laravel auth
@@ -56,20 +48,16 @@ Route::get('/', function () {return redirect()->route('view.login');});
 
 
 // ✅ Stock Management Routes
-Route::get('/stock', [RawMaterialController::class, 'viewRawMaterials'])->name('admin.raw-material.stock');
-
-Route::post('/raw-material/store', [RawMaterialController::class, 'store'])->name('raw-material.store');
-Route::patch('/raw-material/update/{id}', [RawMaterialController::class, 'updateMaterial'])->name('raw-material.update');
-Route::post('/raw-material/add/{id}', [RawMaterialController::class, 'addQuantity'])->name('raw-material.add');
-Route::post('/raw-material/reduce/{id}', [RawMaterialController::class, 'reduceQuantity'])->name('raw-material.reduce');
-Route::delete('/raw-material/delete/{id}', [RawMaterialController::class, 'deleteRawMaterial'])->name('raw-material.delete');
-Route::post('products/{id}/add-quantity', [ReportController::class, 'addQuantity'])
+    Route::get('/stock', [RawMaterialController::class, 'viewRawMaterials'])->name('admin.raw-material.stock');
+    Route::post('/raw-material/store', [RawMaterialController::class, 'store'])->name('raw-material.store');
+    Route::patch('/raw-material/update/{id}', [RawMaterialController::class, 'updateMaterial'])->name('raw-material.update');
+    Route::post('/raw-material/add/{id}', [RawMaterialController::class, 'addQuantity'])->name('raw-material.add');
+    Route::post('/raw-material/reduce/{id}', [RawMaterialController::class, 'reduceQuantity'])->name('raw-material.reduce');
+    Route::delete('/raw-material/delete/{id}', [RawMaterialController::class, 'deleteRawMaterial'])->name('raw-material.delete');
+    Route::post('products/{id}/add-quantity', [ReportController::class, 'addQuantity'])
     ->name('admin.products.add_quantity');
 
-
-
-
-
+// ✅ Expense Management Routes
     Route::post('admin/expenses', [ExpenseController::class, 'storeExpense'])->name('admin.expenses.store');
     Route::get('admin/reports/sales/download', function () {return Excel::download(new SalesReportExport, 'sales_report.xlsx');})->name('admin.sales.report.download');
     Route::get('/orders/export', function() {return Excel::download(new OrdersExport, 'orders.xlsx');})->name('orders.export');
@@ -87,22 +75,24 @@ Route::post('products/{id}/add-quantity', [ReportController::class, 'addQuantity
     // Products management
     Route::get('/all-products', [ProductController::class, 'DisplayProducts'])->name('all.products');
     Route::get('/create-products', [ProductController::class, 'CreateProducts'])->name('create.products');
-    Route::post('/store-products', [ProductController::class, 'StoreProducts'])->name('store.products');
+    Route::post('/products/store-products', [ProductController::class, 'StoreProducts'])->name('store.products');
 
     // AJAX edit and delete
     Route::post('/products/{id}/edit-products', [ProductController::class, 'AjaxUpdateProducts'])->name('ajax.edit.products');
     Route::delete('/products/{id}/delete-products', [ProductController::class, 'DeleteProducts'])->name('ajax.delete.products');
-// Admin product routes
-Route::prefix('admin/product')->name('admin.product.')->group(function () {
-    // Get assigned materials for a product
-    Route::get('{product}/assigned-materials', [\App\Http\Controllers\Admins\ProductController::class, 'getAllMaterialsForAssign'])
-        ->name('getAssignedMaterials');
+
+Route::prefix('product')->name('admin.product.')->group(function () {
+    // Get all materials for a product (with assigned qty)
+    Route::get('{id}/get-materials', [ProductController::class, 'getMaterials'])->name('getMaterials');
+
+    // Get only assigned materials
+    Route::get('{id}/get-assigned-materials', [ProductController::class, 'getAssignedMaterials'])->name('getAssignedMaterials');
 
     // Save assigned materials
-    Route::post('{product}/materials', [\App\Http\Controllers\Admins\ProductController::class, 'addMaterials'])
-        ->name('addMaterials');
+    Route::post('{id}/add-materials', [ProductController::class, 'addMaterials'])->name('addMaterials');
 });
 
+    Route::get('raw-materials/list', [RawMaterialController::class, 'listMaterials']);
 
 
     // Bookings management

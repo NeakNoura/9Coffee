@@ -4,6 +4,9 @@
 @php
 $types = App\Models\ProductType::all();
 @endphp
+<script>
+    window.productTypes = @json($types);
+</script>
 
 <div class="container-fluid py-4">
 
@@ -12,9 +15,10 @@ $types = App\Models\ProductType::all();
     {{-- Page Header --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-cafe-title">☕ Product Management</h2>
-        <a href="{{ route('create.products') }}" class="btn btn-create btn-lg">
-            <i class="bi bi-plus-circle"></i> Add Product
-        </a>
+        <a href="#" id="btnAddProduct" class="btn btn-create btn-lg">
+    <i class="bi bi-plus-circle"></i> Add Product
+</a>
+
     </div>
 
     {{-- Products Card --}}
@@ -89,7 +93,7 @@ $types = App\Models\ProductType::all();
     </button>
 
     <button class="btn btn-sm btn-info btnViewRecipe"
-        data-url="{{ route('admin.product.getAssignedMaterials', $product->id) }}">
+        data-url="{{ route('admin.product.getMaterials', $product->id) }}">
         View Assigned
     </button>
 </td>

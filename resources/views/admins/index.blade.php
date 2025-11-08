@@ -60,18 +60,6 @@
                     <span class="title">Help </span>
                 </a>
             </li>
-
-            <li>
-        <a href="{{ route('create.products') }}">
-            <span class="icon">
-                <ion-icon name="layers-outline"></ion-icon> <!-- stacked boxes, looks like stock -->
-            </span>
-            <span class="title">Add Product</span>
-        </a>
-    </li>
-
-
-
             <li>
                 <a href="{{ route('staff.sell.form') }}">
                     <span class="icon">
@@ -89,20 +77,16 @@
             </span>
             <span class="title">Total Sales Report</span>
         </a>
-    </li>
-
-
-
-    <li>
-        <a href="{{ route('admin.expenses') }}">
-            <span class="icon">
-                <ion-icon name="cash-outline"></ion-icon>
-            </span>
-            <span class="title">Expenses</span>
-        </a>
-    </li>
-
-    <li>
+        </li>
+        <li>
+            <a href="{{ route('admin.expenses') }}">
+                <span class="icon">
+                    <ion-icon name="cash-outline"></ion-icon>
+                </span>
+                <span class="title">Expenses</span>
+            </a>
+        </li>
+            <li>
                 <a href="{{ route('admin.logout') }}"
                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     <span class="icon">
