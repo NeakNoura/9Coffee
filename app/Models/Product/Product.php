@@ -42,12 +42,13 @@ class Product extends Model
     }
 
     // Raw Materials pivot relationship
-    public function rawMaterials()
-    {
-        return $this->belongsToMany(RawMaterial::class, 'product_raw_material')
-                    ->withPivot('quantity_required')
-                    ->withTimestamps();
-    }
+public function rawMaterials()
+{
+    return $this->belongsToMany(RawMaterial::class, 'product_raw_material', 'product_id', 'raw_material_id')
+                ->withPivot('quantity_required')
+                ->withTimestamps();
+}
+
 
     // Deduct ingredients after a product is sold
     public function deductIngredients(int $qty)

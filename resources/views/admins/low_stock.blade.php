@@ -36,11 +36,11 @@
                     <tbody>
                         @php $counter = 1; @endphp
         @forelse ($allProducts as $product)
-<tr>
-    <td>{{ $loop->iteration }}</td>
-    <td>{{ $product->name }}</td>
-    <td>{{ $product->quantity }}</td> <!-- Real quantity in DB -->
-    {{-- <td>{{ $product->unit ?? '-' }}</td> --}}
+        <tr>
+            <td>{{ $loop->iteration }}</td>
+            <td>{{ $product->name }}</td>
+        <td id="qty-{{ $product->id }}">{{ $product->quantity }}</td>
+            {{-- <td>{{ $product->unit ?? '-' }}</td> --}}
     <td>
     @php
         $status = $product->available_stock <= 5 ? 'Low' : 'OK';

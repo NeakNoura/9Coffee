@@ -1,0 +1,31 @@
+html, body {
+    height: 100%;
+    background-color: #2e2424;
+}
+
+.table-responsive {
+    scrollbar-width: thin;
+    scrollbar-color: #db770c #3e2f2f;
+}
+
+.table-responsive::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #3e2f2f;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background-color: #db770c;
+    border-radius: 4px;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(219, 119, 12, 0.2);
+}
+
+.card-header h4,
+.btn {
+    font-weight: 500;
+}

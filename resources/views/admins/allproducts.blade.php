@@ -17,10 +17,8 @@ $types = App\Models\ProductType::all();
         <h2 class="text-cafe-title">☕ Product Management</h2>
         <a href="#" id="btnAddProduct" class="btn btn-create btn-lg">
     <i class="bi bi-plus-circle"></i> Add Product
-</a>
-
+    </a>
     </div>
-
     {{-- Products Card --}}
     <div class="card shadow-sm rounded-4 cafe-card">
         <div class="card-body">
@@ -53,8 +51,8 @@ $types = App\Models\ProductType::all();
             <th>Delete</th>
             <th>Ingredient</th>
         </tr>
-    </thead>
-    <tbody>
+        </thead>
+        <tbody>
         @php $counter = 1; @endphp
         @foreach ($products as $product)
         <tr style="border-bottom:1px solid #5a3d30;">
@@ -66,17 +64,16 @@ $types = App\Models\ProductType::all();
                      style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border:1px solid #6b4c3b;">
             </td>
             <td>${{ number_format($product->price, 2) }}</td>
-<td>{{ $product->productType ? $product->productType->name : 'N/A' }}</td>
+            <td>{{ $product->productType ? $product->productType->name : 'N/A' }}</td>
             <td>
                 <button type="button"
-        class="btn btn-info btn-sm rounded-pill btn-edit"
-        data-id="{{ $product->id }}"
-        data-name="{{ $product->name }}"
-        data-price="{{ $product->price }}"
-        data-type="{{ $product->productType ? $product->productType->name : '' }}">
-    Edit
-</button>
-
+                    class="btn btn-info btn-sm rounded-pill btn-edit"
+                    data-id="{{ $product->id }}"
+                    data-name="{{ $product->name }}"
+                    data-price="{{ $product->price }}"
+                    data-type="{{ $product->productType ? $product->productType->name : '' }}">
+                Edit
+            </button>
             </td>
             <td>
                 <button type="button"
@@ -92,20 +89,20 @@ $types = App\Models\ProductType::all();
         Assign Recipe
     </button>
 
-    <button class="btn btn-sm btn-info btnViewRecipe"
-        data-url="{{ route('admin.product.getMaterials', $product->id) }}">
-        View Assigned
-    </button>
-</td>
+<button class="btn btn-sm btn-info btnViewRecipe"
+        data-url="{{ route('admin.product.getAssignedMaterials', $product->id) }}">
+    View Assigned
+</button>
 
+        </td>
         </tr>
         @php $counter++; @endphp
         @endforeach
     </tbody>
-</table>
-
+        </table>
             </div>
 
+            {{-- Back to Dashboard Button --}}
             <a href="{{ route('admins.dashboard') }}" class="btn btn-back mt-4">
                 <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
             </a>

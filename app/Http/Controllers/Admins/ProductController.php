@@ -18,45 +18,45 @@ class ProductController extends Controller
     }
 
 
-public function StoreProducts(Request $request)
-{
-    $request->validate([
-        'name' => 'required|unique:products,name|max:100',
-        'price' => 'required|numeric',
-        'product_type_id' => 'required|exists:product_types,id',
-        'image' => 'required|image|mimes:jpeg,png,jpg,gif',
-        'description' => 'nullable',
-    ]);
+    public function StoreProducts(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|unique:products,name|max:100',
+            'price' => 'required|numeric',
+            'product_type_id' => 'required|exists:product_types,id',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif',
+            'description' => 'nullable',
+        ]);
 
-    $imagePath = public_path('assets/images');
-    if (!file_exists($imagePath)) {
-        mkdir($imagePath, 0775, true);
+        $imagePath = public_path('assets/images');
+        if (!file_exists($imagePath)) {
+            mkdir($imagePath, 0775, true);
+        }
+
+        $imageName = time() . '_' . $request->image->getClientOriginalName();
+        $request->image->move($imagePath, $imageName);
+
+        $product = Product::create([
+            'name' => $request->name,
+            'price' => $request->price,
+            'image' => $imageName,
+            'description' => $request->description,
+            'product_type_id' => $request->product_type_id,
+            'quantity' => $request->quantity ?? 0,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product created successfully!',
+            'product' => [
+                'id' => $product->id,
+                'name' => $product->name,
+                'price' => $product->price,
+                'image' => $product->image,
+                'product_type_name' => $product->productType->name ?? 'N/A'
+            ]
+        ]);
     }
-
-    $imageName = time() . '_' . $request->image->getClientOriginalName();
-    $request->image->move($imagePath, $imageName);
-
-    $product = Product::create([
-        'name' => $request->name,
-        'price' => $request->price,
-        'image' => $imageName,
-        'description' => $request->description,
-        'product_type_id' => $request->product_type_id,
-        'quantity' => $request->quantity ?? 0,
-    ]);
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Product created successfully!',
-        'product' => [
-            'id' => $product->id,
-            'name' => $product->name,
-            'price' => $product->price,
-            'image' => $product->image,
-            'product_type_name' => $product->productType->name ?? 'N/A'
-        ]
-    ]);
-}
 
 
     public function DeleteProducts($id){
@@ -120,17 +120,22 @@ public function getMaterials($id)
     return response()->json($rawMaterials);
 }
 
-// Fetch only assigned materials
 public function getAssignedMaterials($id)
 {
-    $assigned = DB::table('product_raw_material')
-        ->join('raw_materials', 'product_raw_material.raw_material_id', '=', 'raw_materials.id')
-        ->where('product_raw_material.product_id', $id)
-        ->select('raw_materials.name', 'raw_materials.unit', 'product_raw_material.quantity_required')
-        ->get();
+    $product = Product::with('rawMaterials')->findOrFail($id);
+
+    $assigned = $product->rawMaterials->map(function($mat) {
+        return [
+            'id' => $mat->id,
+            'name' => $mat->name,
+            'unit' => $mat->unit,
+            'quantity_required' => $mat->pivot->quantity_required ?? 0,
+        ];
+    });
 
     return response()->json($assigned);
 }
+
 
 // Assign / update raw materials for a product
 public function addMaterials(Request $request, $id)

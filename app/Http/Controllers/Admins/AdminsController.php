@@ -14,8 +14,6 @@ use Illuminate\Support\Facades\Cookie;
 class AdminsController extends Controller
 {
 
-
-
  public function home()
     {
         return view('home');

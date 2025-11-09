@@ -31,7 +31,8 @@
 
 /* Edit Button */
 .btn-edit {
-    background-color: #3498db;
+    background-color:#db770c;
+;
     color: #fff;
 }
 .btn-edit:hover {
@@ -77,7 +78,8 @@
 
 /* Assign Recipe Button */
 .btnAssignRecipe {
-    background-color: #8e44ad;
+    background-color: #db770c;
+;
     color: #fff;
 }
 .btnAssignRecipe:hover {
@@ -184,7 +186,7 @@
 }
 
 .btn-edit { /* Blue */
-    background-color: #3498db;
+    background-color: #db770c;
     padding: 0.3rem 0.8rem;
 }
 .btn-edit:hover {

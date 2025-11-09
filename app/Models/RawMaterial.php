@@ -13,11 +13,12 @@ class RawMaterial extends Model
         'unit'
     ];
 
- public function products()
+public function products()
 {
-    return $this->belongsToMany(Product::class, 'product_raw_material')
+    return $this->belongsToMany(Product::class, 'product_raw_material', 'raw_material_id', 'product_id')
                 ->withPivot('quantity_required')
                 ->withTimestamps();
 }
+
 
 }
