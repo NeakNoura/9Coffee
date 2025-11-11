@@ -6,7 +6,7 @@
 <div class="login-container">
     <div class="login-card">
         <div class="login-header text-center">
-            <img src="{{ asset('assets/images/americano.jpg') }}" alt="9NineCoffee Logo" class="login-logo">
+            <img src="{{ asset('assets/images/08052021-05_generated.jpg') }}" alt="9NineCoffee Logo" class="login-logo">
             <h3 class="fw-bold text-dark">9NineCoffee</h3>
             <p class="text-muted mb-4">Sign in to your account</p>
         </div>
@@ -47,9 +47,9 @@
                     <input type="checkbox" class="form-check-input" id="remember" name="remember">
                     <label for="remember" class="form-check-label text-dark">Remember Me</label>
                 </div>
-                <a href="{{ route('password.request') }}" class="text-decoration-none text-primary small">
+                {{-- <a href="{{ route('password.request') }}" class="text-decoration-none text-primary small">
                     Forgot Password?
-                </a>
+                </a> --}}
             </div>
 
             <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">

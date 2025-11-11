@@ -4,6 +4,31 @@
     font-weight: 600;
     transition: all 0.2s;
 }
+/* Add/Cart buttons */
+.btn-add-to-cart {
+    background-color: #db770c !important; /* your desired orange */
+    border-color: #db770c !important;
+    color: #fff !important;
+}
+
+.btn-add-to-cart:hover {
+    background-color: #e0891a !important;
+    border-color: #e0891a !important;
+    color: #fff !important;
+}
+
+/* Remove button optional */
+.btn-remove-from-cart {
+    background-color: #c72c2c !important;
+    border-color: #c72c2c !important;
+    color: #fff !important;
+}
+
+.btn-remove-from-cart:hover {
+    background-color: #e03b3b !important;
+    border-color: #e03b3b !important;
+    color: #fff !important;
+}
 
 /* Filter buttons */
 .staff-sell-section .filter-btn {

@@ -36,39 +36,45 @@ class RawMaterialController extends Controller
             'name' => 'required|string|max:100|unique:raw_materials,name,'.$id,
             'unit' => 'required|string|max:10',
         ]);
-
         if ($request->has('new_id')) $material->id = $request->new_id;
         $material->name = $request->name;
         $material->unit = $request->unit;
         $material->save();
-
         return response()->json($material);
     }
 
-    public function addQuantity(Request $request, $id)
-    {
-        $request->validate(['quantity' => 'required|integer|min:1']);
-        $material = RawMaterial::findOrFail($id);
-        $material->quantity += $request->quantity;
-        $material->save();
+public function addQuantity(Request $request, $id)
+{
+    $request->validate([
+        'quantity' => 'required|numeric|min:0.01', // allow decimals
+    ]);
 
-        return response()->json($material);
+    $material = RawMaterial::findOrFail($id);
+    $material->quantity += floatval($request->quantity); // make sure to add float
+    $material->save();
+
+    return response()->json($material);
+}
+
+public function reduceQuantity(Request $request, $id)
+{
+    $request->validate([
+        'quantity' => 'required|numeric|min:0.01', // allow decimals
+    ]);
+
+    $material = RawMaterial::findOrFail($id);
+
+    $reduceQty = floatval($request->quantity);
+
+    if ($material->quantity < $reduceQty) {
+        return response()->json(['message' => 'Not enough stock!'], 400);
     }
 
-    public function reduceQuantity(Request $request, $id)
-    {
-        $request->validate(['quantity' => 'required|integer|min:1']);
-        $material = RawMaterial::findOrFail($id);
+    $material->quantity -= $reduceQty;
+    $material->save();
 
-        if ($material->quantity < $request->quantity) {
-            return response()->json(['message' => 'Not enough stock!'], 400);
-        }
-
-        $material->quantity -= $request->quantity;
-        $material->save();
-
-        return response()->json($material);
-    }
+    return response()->json($material);
+}
 
     public function deleteRawMaterial($id)
     {
@@ -82,7 +88,6 @@ class RawMaterialController extends Controller
         return response()->json(['success' => true]);
     }
 
-    /** ✅ Used by Assign Recipe modal */
     public function listMaterials(): JsonResponse
     {
         try {

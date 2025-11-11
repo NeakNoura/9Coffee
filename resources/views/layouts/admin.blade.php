@@ -11,7 +11,7 @@
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
         <link href="{{ asset('assets/css/admin.css')}}" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-        <link rel="stylesheet" href="{{ asset('assets/css/fonts/icomoon/icomoon.woff') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/icomoon.css') }}">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

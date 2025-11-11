@@ -50,12 +50,12 @@
                     </thead>
                     <tbody>
                         @forelse ($expenses as $expense)
-                            <tr style="border-bottom:1px solid #5a3d30;">
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $expense->description }}</td>
-                                <td>${{ number_format($expense->amount, 2) }}</td>
-                                <td>{{ \Carbon\Carbon::parse($expense->created_at)->format('Y-m-d H:i') }}</td>
-                            </tr>
+                            <tr style="{{ str_contains($expense->description, 'Auto-calculated') ? 'background-color:#ffeaa7; color:#2d3436;' : '' }}">
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $expense->description }}</td>
+                            <td>${{ number_format($expense->amount, 2) }}</td>
+                            <td>{{ \Carbon\Carbon::parse($expense->created_at)->format('Y-m-d H:i') }}</td>
+                        </tr>
                         @empty
                             <tr><td colspan="4" class="text-center">No expense recorded yet 💼</td></tr>
                         @endforelse
@@ -70,9 +70,7 @@
                     <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
                 </a>
             </div>
-                <button class="btn btn-success fw-bold">
-                    <i class="bi bi-file-earmark-excel"></i> Download Excel
-                </button>
+
             </div>
         </div>
     </div>

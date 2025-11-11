@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     Swal.fire('Error', 'Please enter a valid quantity', 'error');
                     return;
                 }
-
                 fetch(`/admin/products/${productId}/add-quantity`, {
                     method: 'POST',
                     headers: {
@@ -45,7 +44,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     if(res.ok && data.success){
                         Swal.fire('Added!', data.message, 'success');
-                        document.getElementById(`qty-${productId}`).textContent = data.new_quantity;
+
+                        // Update quantity cell
+                        const qtyEl = document.getElementById(`qty-${productId}`);
+                        qtyEl.textContent = data.new_quantity;
+
+                        // Update status badge dynamically
+                        const statusEl = qtyEl.closest('tr').querySelector('td:nth-child(4) span');
+                        const lowStockThreshold = 5; // same as Blade logic
+                        if(data.new_quantity <= lowStockThreshold){
+                            statusEl.textContent = 'Low';
+                            statusEl.className = 'badge rounded-pill bg-danger';
+                        } else {
+                            statusEl.textContent = 'OK';
+                            statusEl.className = 'badge rounded-pill bg-success';
+                        }
+
+                        // Optionally, hide the + Add button if stock is now OK
+                        if(data.new_quantity > lowStockThreshold){
+                            btn.style.display = 'none';
+                        }
                     } else {
                         Swal.fire('Error', data?.message || 'Something went wrong', 'error');
                     }

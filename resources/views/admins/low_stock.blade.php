@@ -40,7 +40,6 @@
             <td>{{ $loop->iteration }}</td>
             <td>{{ $product->name }}</td>
         <td id="qty-{{ $product->id }}">{{ $product->quantity }}</td>
-            {{-- <td>{{ $product->unit ?? '-' }}</td> --}}
     <td>
     @php
         $status = $product->available_stock <= 5 ? 'Low' : 'OK';

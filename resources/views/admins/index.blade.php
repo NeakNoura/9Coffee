@@ -49,7 +49,7 @@
                     <span class="icon">
                         <ion-icon name="warning-outline"></ion-icon>
                     </span>
-                    <span class="title">Stock Management</span>
+                    <span class="title">Stock Product Management</span>
                 </a>
             </li>
                     <li>
@@ -177,12 +177,13 @@
                 <td>{{ $order->payment_status ?? 'Pending' }}</td>
                 <td>
                     <span class="badge
-                        @if(strtolower($order->status)=='pending') bg-warning
-                        @elseif(strtolower($order->status)=='cancelled') bg-danger
-                        @else bg-success
-                        @endif px-3 py-1 rounded-pill">
-                        {{ $order->status }}
-                    </span>
+    @if(strtolower($order->status)=='pending') bg-warning
+    @elseif(strtolower($order->status)=='cancelled') bg-danger
+    @else bg-success-custom
+    @endif px-3 py-1 rounded-pill">
+    {{ $order->status }}
+</span>
+
                 </td>
                 <td>{{ $order->created_at->timezone('Asia/Phnom_Penh')->format('d M Y H:i') }}</td>
             </tr>
@@ -224,39 +225,45 @@
         const analyticsChart = new Chart(ctx, {
             type: 'bar', // can change to 'line', 'pie', etc.
             data: {
-                labels: ['Bookings', 'Orders', 'Users', 'Earnings'],
+                labels: ['SaleTotal', 'Orders', 'Expense', 'Earnings'],
                 datasets: [{
-                    label: 'Statistics',
-                    data: [
-                        {{ $bookingsCount ?? 0 }},
-                        {{ $ordersCount ?? 0 }},
-                        {{ $usersCount ?? 0 }},
-                        {{ $earning ?? 0 }}
+    label: 'Statistics',
+    data: [{{ $totalSales ?? 0 }}, {{ $ordersCount ?? 0 }}, {{ $totalExpenses ?? 0 }}, {{ $earning ?? 0 }}],
+    backgroundColor: [
+        'rgba(54, 162, 235, 0.7)',
+        'rgba(255, 99, 132, 0.7)',
+        'rgba(255, 206, 86, 0.7)',
+        'rgba(75, 192, 192, 0.7)'
+    ],
+    borderColor: [
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 99, 132, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)'
+    ],
+    borderWidth: 1,
+    borderRadius: 8,
+}]
 
-                    ],
-                    backgroundColor: [
-                        'rgba(54, 162, 235, 0.7)',
-                        'rgba(255, 99, 132, 0.7)',
-                        'rgba(255, 206, 86, 0.7)',
-                        'rgba(75, 192, 192, 0.7)'
-                    ],
-                    borderColor: [
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)'
-                    ],
-                    borderWidth: 1
-                }]
             },
             options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
+    responsive: true,
+    scales: {
+        y: {
+            min: 1,
+            beginAtZero: false,
+            ticks: {
+                stepSize: 1
             }
+        },
+        x: {
+            grid: {
+                display: false
+            }
+        }
+    }
+}
+
         });
     </script>
 

@@ -13,17 +13,14 @@
 }
 
 :root {
-  --blue: #081e65;
-  --white: #fff;
+  --blue: #fff;
+  --white: #db770c;
   --gray: #f5f5f5;
   --black1: #222;
   --black2: #999;
 }
 
-/* General admin text */
-html, body {
-    font-family: 'Roboto', sans-serif !important; /* important to override Bootstrap */
-}
+
 
 html, body, input, select, textarea, button, td, th, a, span, p, li {
     font-family: 'Roboto', sans-serif !important;
@@ -400,14 +397,14 @@ html, body {
 }
 
 .login-card .btn-primary {
-    background-color: #6c5ce7;
+    background-color: #db770cff;
     border: none;
     font-weight: 600;
     border-radius: 10px;
 }
 
 .login-card .btn-primary:hover {
-    background-color: #5941c1;
+    background-color: #db770cff;
 }
 
 /* Responsive */
@@ -445,6 +442,17 @@ html, body {
 
 .recent-orders-table tbody tr:hover {
     background-color: #dfe6e9; /* light hover effect */
+}
+/* Override success badge */
+.badge.bg-success {
+    background-color: #28a745 !important; /* default green */
+    color: #fff !important; /* text color */
+}
+
+/* Example: custom success color (orange shade) */
+.badge.bg-success-custom {
+    background-color: #db770c !important; /* your custom color */
+    color: #fff !important;
 }
 
 /* Card Styling */
@@ -732,7 +740,7 @@ html, body {
   padding: 20px;
   box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
   border-radius: 20px;
-  background-color: #b1b0a3;
+  background-color: #fff;
 }
 
 .details .cardHeader {
@@ -743,6 +751,7 @@ html, body {
 .cardHeader h2 {
   font-weight: 600;
   color: var(--blue);
+  color:#e9b10a ;
 }
 .cardHeader .btn {
   position: relative;

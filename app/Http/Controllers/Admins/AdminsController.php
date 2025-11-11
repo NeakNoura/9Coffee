@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\DB;
 
 class AdminsController extends Controller
 {
@@ -51,23 +52,23 @@ public function logout(Request $request)
     // Redirect to admin login
     return redirect()->route('view.login');
 }
+public function index() {
+    $productsCount  = Product::count();
+    $ordersCount    = Order::count();
+    $usersCount     = User::count();
+    $totalSales     = Order::sum('price');
+    $totalExpenses  = DB::table('expenses')->sum('amount');
+    $recentOrders   = Order::latest()->take(8)->get();
+    $earning       = $totalSales;
 
- public function index(){
-    $productsCount = Product::count();
-    $ordersCount = Order::count();
-    $bookingsCount = Booking::count();
-    $adminsCount = Admin::count();
-    $usersCount = User::count();
-    $earning = Order::sum('price');
-    $recentOrders = Order::latest()->take(8)->get();
     return view('admins.index', compact(
         'productsCount',
         'ordersCount',
-        'bookingsCount',
-        'adminsCount',
         'usersCount',
+        'totalSales',
+        'totalExpenses',
         'earning',
-        'recentOrders'  // now defined
+        'recentOrders'
     ));
 }
 

@@ -15,6 +15,7 @@ use App\Http\Controllers\Admins\ProductController;
 use App\Http\Controllers\Admins\RawMaterialController;
 use App\Http\Controllers\Admins\ReportController;
 use App\Http\Controllers\Admins\StaffController;
+use App\Exports\ExpensesExport;
 
 
 // 🟢 Default Laravel auth
@@ -62,7 +63,9 @@ Route::get('/', function () {return redirect()->route('view.login');});
     Route::get('admin/reports/sales/download', function () {return Excel::download(new SalesReportExport, 'sales_report.xlsx');})->name('admin.sales.report.download');
     Route::get('/orders/export', function() {return Excel::download(new OrdersExport, 'orders.xlsx');})->name('orders.export');
     Route::get('admin/expenses', [ExpenseController::class, 'viewExpenses'])->name('admin.expenses');
-
+Route::get('admin/expenses/download', function () {
+    return Excel::download(new ExpensesExport, 'expenses.xlsx');
+})->name('admin.expenses.download');
 
     // Orders management
     Route::get('/all-orders', [OrderController::class, 'DisplayAllOrders'])->name('all.orders');

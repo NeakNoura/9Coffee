@@ -102,7 +102,6 @@
                         @forelse ($bookings as $booking)
                             <tr id="booking-{{ $booking->id }}" style="border-bottom:1px solid #6b4c3b;">
                                 <td>{{ $loop->iteration }}</td> {{-- ✅ Sequential number --}}
-                                <td>{{ $booking->id }}</td>
                                 <td>{{ $booking->first_name }}</td>
                                 <td>{{ $booking->last_name }}</td>
                                 <td>{{ $booking->date }}</td>

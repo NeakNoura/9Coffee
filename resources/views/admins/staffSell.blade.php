@@ -11,9 +11,12 @@
                             <div class="card shadow-sm border-0 rounded-4 staff-sell-section" style="background-color: #3e2f2f; color: #f5f5f5;">
 
                                 {{-- Header --}}
-                            <div class="d-flex justify-content-between mb-2">
+                            <div class="d-flex justify-content-between mb-4">
                     <a href="{{ route('admins.dashboard') }}" class="btn btn-outline-light fw-bold">
                         <i class="bi bi-arrow-left-circle"></i> Back
+                    </a>
+                            <a href="{{ route('admin.raw-material.stock')}}" class="btn btn-outline-light fw-bold">
+                        <i class="bi bi-exclamation-triangle"></i> Ingredients Management
                     </a>
                     <a href="{{ route('admin.low.stock') }}" class="btn btn-outline-light fw-bold">
                         <i class="bi bi-exclamation-triangle"></i> Stock Management
@@ -23,16 +26,8 @@
                 <div class="card-header text-center" style="background-color: #db770cff; color: #fff;">
                     <h4 class="mb-0">Staff Sell POS</h4>
                 </div>
-                {{-- Filters --}}
                 <div class="row mt-3 mb-2">
                     <div class="col-md-12">
-                        {{-- <div class="mb-2">
-                            <strong class="text-white me-2">Filter Type:</strong>
-                            <button class="btn btn-outline-light filter-btn active" data-type="all">All</button>
-                            @foreach($types as $type)
-                                <button class="btn btn-outline-light filter-btn" data-type="{{ $type->id }}">{{ $type->name }}</button>
-                            @endforeach
-                        </div> --}}
                         <div class="mb-2">
                             <strong class="text-warning me-2">Filter Sub-Type:</strong>
                             <button class="btn btn-outline-warning filter-sub-btn active" data-subtype="all">All</button>
@@ -81,8 +76,12 @@
 
                                 {{-- Add/Remove --}}
                                 <div class="mt-3 d-flex justify-content-center gap-2">
-                                    <button type="button" class="btn btn-success btn-add-to-cart"><i class="bi bi-plus-circle"></i> Add</button>
-                                    <button type="button" class="btn btn-danger btn-remove-from-cart"><i class="bi bi-dash-circle"></i> Remove</button>
+                                                                    <button type="button" class="btn btn-add-to-cart">
+                                    <i class="bi bi-plus-circle"></i> Add
+                                </button>
+                                <button type="button" class="btn btn-remove-from-cart">
+                                    <i class="bi bi-dash-circle"></i> Remove
+                                </button>
                                 </div>
                             </div>
                         </div>

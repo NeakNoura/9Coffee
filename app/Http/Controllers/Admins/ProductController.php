@@ -5,9 +5,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product\Product;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Redirect;
 use App\Models\RawMaterial;
-use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -16,8 +14,6 @@ class ProductController extends Controller
             return view('admins.allproducts',compact('products'));
 
     }
-
-
     public function StoreProducts(Request $request)
     {
         $request->validate([
@@ -102,62 +98,62 @@ class ProductController extends Controller
             return response()->json(['success' => true, 'message' => 'Product updated successfully']);
     }
         // Fetch all raw materials with assigned quantity for a product
-public function getMaterials($id)
-{
-    $product = Product::with('rawMaterials')->findOrFail($id);
+        public function getMaterials($id)
+        {
+            $product = Product::with('rawMaterials')->findOrFail($id);
 
-    $rawMaterials = RawMaterial::all()->map(function ($mat) use ($product) {
-        $assigned = $product->rawMaterials->firstWhere('id', $mat->id);
-        return [
-            'id' => $mat->id,
-            'name' => $mat->name,
-            'unit' => $mat->unit,
-            'quantity' => $mat->quantity,
-            'assigned_qty' => $assigned ? $assigned->pivot->quantity_required : 0,
-        ];
-    });
+            $rawMaterials = RawMaterial::all()->map(function ($mat) use ($product) {
+                $assigned = $product->rawMaterials->firstWhere('id', $mat->id);
+                return [
+                    'id' => $mat->id,
+                    'name' => $mat->name,
+                    'unit' => $mat->unit,
+                    'quantity' => $mat->quantity,
+                    'assigned_qty' => $assigned ? $assigned->pivot->quantity_required : 0,
+                ];
+            });
 
-    return response()->json($rawMaterials);
-}
+            return response()->json($rawMaterials);
+        }
 
-public function getAssignedMaterials($id)
-{
-    $product = Product::with('rawMaterials')->findOrFail($id);
+        public function getAssignedMaterials($id)
+        {
+            $product = Product::with('rawMaterials')->findOrFail($id);
 
-    $assigned = $product->rawMaterials->map(function($mat) {
-        return [
-            'id' => $mat->id,
-            'name' => $mat->name,
-            'unit' => $mat->unit,
-            'quantity_required' => $mat->pivot->quantity_required ?? 0,
-        ];
-    });
+            $assigned = $product->rawMaterials->map(function($mat) {
+                return [
+                    'id' => $mat->id,
+                    'name' => $mat->name,
+                    'unit' => $mat->unit,
+                    'quantity_required' => $mat->pivot->quantity_required ?? 0,
+                ];
+            });
 
-    return response()->json($assigned);
-}
+            return response()->json($assigned);
+        }
 
 
 // Assign / update raw materials for a product
-public function addMaterials(Request $request, $id)
-{
-    $product = Product::findOrFail($id);
+            public function addMaterials(Request $request, $id)
+            {
+                $product = Product::findOrFail($id);
 
-    $data = $request->validate([
-        'materials' => 'required|array',
-        'materials.*' => 'numeric|min:0',
-    ]);
+                $data = $request->validate([
+                    'materials' => 'required|array',
+                    'materials.*' => 'numeric|min:0',
+                ]);
 
-    $syncData = [];
-    foreach ($data['materials'] as $rawId => $qty) {
-        if ($qty > 0) {
-            $syncData[$rawId] = ['quantity_required' => $qty];
-        }
-    }
+                $syncData = [];
+                foreach ($data['materials'] as $rawId => $qty) {
+                    if ($qty > 0) {
+                        $syncData[$rawId] = ['quantity_required' => $qty];
+                    }
+                }
 
-    $product->rawMaterials()->sync($syncData);
+                $product->rawMaterials()->sync($syncData);
 
-    return response()->json(['success' => true, 'message' => 'Recipe updated successfully!']);
-}
+                return response()->json(['success' => true, 'message' => 'Recipe updated successfully!']);
+            }
 
 
 
