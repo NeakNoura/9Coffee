@@ -53,7 +53,7 @@ class ExpenseController extends Controller
             ->sum('price');
 
         // Example: 10% of sales as expense
-        $expenseAmount = round($todaySales * 0.1, 2);
+        $expenseAmount = round($todaySales * 0.4, 2);
 
         if ($expenseAmount <= 0) {
             // Nothing to insert/update

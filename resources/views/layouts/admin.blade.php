@@ -50,8 +50,6 @@
                 });
             });
         });
-
-        // Delete All Confirmation
         const deleteAllBtn = document.querySelector('.btn-delete-all');
         if (deleteAllBtn) {
             deleteAllBtn.addEventListener('click', function(e) {

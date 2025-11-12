@@ -15,16 +15,25 @@ class StockController extends Controller
         return view('admins.stock', compact('rawMaterials'));
     }
 
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'quantity' => 'required|numeric|min:0',
+ public function update(Request $request, $id)
+{
+    $request->validate([
+        'quantity' => 'required|numeric|min:0',
+    ]);
+
+    $material = RawMaterial::findOrFail($id);
+    $material->quantity = $request->quantity;
+    $material->save();
+
+    // Return JSON for AJAX
+    if($request->ajax()){
+        return response()->json([
+            'success' => true,
+            'new_quantity' => $material->quantity
         ]);
-
-        $material = RawMaterial::findOrFail($id);
-        $material->quantity = $request->quantity;
-        $material->save();
-
-        return redirect()->back()->with('success', 'Stock updated successfully!');
     }
+
+    return redirect()->back()->with('success', 'Stock updated successfully!');
+}
+
 }

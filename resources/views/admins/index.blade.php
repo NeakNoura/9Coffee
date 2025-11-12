@@ -13,7 +13,6 @@
                     <span class="title">Admin</span>
                 </a>
             </li>
-
             <li>
                 <a href="{{ route('all.bookings') }}">
                     <span class="icon">
@@ -31,7 +30,7 @@
                 </a>
             </li>
                 <li>
-        <a href="{{ route('admin.raw-material.stock') }}">
+            <a href="{{ route('admin.raw-material.stock') }}">
             <span class="icon"><ion-icon name="cube-outline"></ion-icon></span>
             <span class="title">Ingredients Management</span>
                 </a>
@@ -263,12 +262,7 @@
         }
     }
 }
-
         });
     </script>
-
-
     </body>
-
-
     @endsection

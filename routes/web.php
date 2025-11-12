@@ -36,16 +36,18 @@ Route::get('/', function () {return redirect()->route('view.login');});
     Route::get('/dashboard', [AdminsController::class, 'index'])->name('admins.dashboard');
     Route::post('/logout', [AdminsController::class, 'logout'])->name('admin.logout');
     Route::get('/all-users', [AdminsController::class, 'DisplayAllUsers'])->name('all.users');
+    Route::get('/help', [AdminsController::class, 'Help'])->name('admins.help');
+    Route::get('admin/low-stock', [ReportController::class, 'lowStock'])->name('admin.low.stock');
+    Route::get('admin/reports/sales', [ReportController::class, 'salesReport'])->name('admin.sales.report');
+    Route::patch('/products/update-stock/{id}', [ReportController::class, 'updateStock'])->name('admin.product.update-stock');
+Route::middleware(['auth:admin', 'superadmin'])->prefix('admin')->group(function () {
     Route::get('/all-admins', [AdminsController::class, 'DisplayAllAdmins'])->name('all.admins');
     Route::get('/create-admins', [AdminsController::class, 'createAdmins'])->name('create.admins');
     Route::post('/create-admins', [AdminsController::class, 'storeAdmins'])->name('store.admins');
     Route::get('/edit-admin/{id}', [AdminsController::class, 'editAdmin'])->name('edit.admin');
     Route::post('/update-admin/{id}', [AdminsController::class, 'updateAdmin'])->name('update.admins');
     Route::delete('/delete-admin/{id}', [AdminsController::class, 'deleteAdmin'])->name('delete.admin');
-    Route::get('/help', [AdminsController::class, 'Help'])->name('admins.help');
-    Route::get('admin/low-stock', [ReportController::class, 'lowStock'])->name('admin.low.stock');
-    Route::get('admin/reports/sales', [ReportController::class, 'salesReport'])->name('admin.sales.report');
-    Route::patch('/products/update-stock/{id}', [ReportController::class, 'updateStock'])->name('admin.product.update-stock');
+});
 
 
 // ✅ Stock Management Routes

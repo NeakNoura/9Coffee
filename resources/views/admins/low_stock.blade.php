@@ -41,16 +41,15 @@
             <td>{{ $product->name }}</td>
         <td id="qty-{{ $product->id }}">{{ $product->quantity }}</td>
     <td>
-    @php
-        $status = $product->available_stock <= 5 ? 'Low' : 'OK';
-        $badgeClass = $product->available_stock <= 5 ? 'bg-danger' : 'bg-success';
-    @endphp
-    <span class="badge rounded-pill {{ $badgeClass }}">
-        {{ $status }}
-    </span>
+@php
+    $status = $product->available_stock <= 5 ? 'Low' : 'OK';
+    $badgeClass = $product->available_stock <= 5 ? 'bg-danger' : 'bg-success';
+@endphp
+<span class="badge rounded-pill {{ $badgeClass }}">{{ $status }}</span>
+
 </td>
 
-   <td>
+ <td>
     <form action="{{ route('admin.product.update-stock', $product->id) }}" method="POST" class="d-inline">
         @csrf
         @method('PATCH')
@@ -66,6 +65,7 @@
         </button>
     @endif
 </td>
+
 
 </tr>
 @empty

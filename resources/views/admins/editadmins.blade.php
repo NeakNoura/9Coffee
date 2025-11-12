@@ -4,6 +4,9 @@
 <div class="container mt-5 pt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
+             <a href="{{ route('admins.dashboard') }}" class="btn btn-outline-light fw-bold">
+                        <i class="bi bi-arrow-left-circle"></i> Back
+                    </a>
             <div class="card shadow-sm border-0 rounded-4" style="background-color: #3e2f2f; color: #f5f5f5;">
                 <div class="card-header text-center" style="background-color: #db770c; color: #fff; font-weight:700;">
                     <h4 class="mb-0">Edit Admin</h4>

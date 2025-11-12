@@ -33,10 +33,7 @@
                     <tbody class="text-center">
     @foreach($rawMaterials as $index => $material)
     <tr>
-        {{-- Visual numbering only --}}
         <td>{{ $index + 1 }}</td>
-
-        {{-- Material info --}}
         <td id="displayName{{ $material->id }}">{{ $material->name }}</td>
         <td id="displayQty{{ $material->id }}">{{ number_format($material->quantity, 2) }}</td>
         <td id="displayUnit{{ $material->id }}">{{ $material->unit }}</td>
@@ -45,8 +42,6 @@
                 {{ $material->quantity < 5 ? 'Low' : 'OK' }}
             </span>
         </td>
-
-        {{-- Buttons — keep the real ID here! --}}
         <td>
             <button class="btn btn-success btnAddStock"
                 data-id="{{ $material->id }}"
@@ -54,7 +49,6 @@
                 data-unit="{{ $material->unit }}">
                 ➕ Add
             </button>
-
             <button class="btn btn-warning btnReduceStock"
                 data-id="{{ $material->id }}"
                 data-name="{{ $material->name }}"
@@ -88,14 +82,8 @@
         </div>
     </div>
 </div>
-
-{{-- ✅ SweetAlert --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-{{-- ✅ Custom JS --}}
 <script src="{{ asset('assets/js/raw-material.js') }}"></script>
-
-{{-- ✅ Success Toast --}}
 @if(Session::has('success'))
 <script>
 Swal.fire({
