@@ -5,15 +5,12 @@
         let cart = {};
         const sizePriceMap = { S: 2.00, M: 2.25, L: 2.50 }; // USD prices per size
         const EXCHANGE_RATE = 4100; // 1 USD = 4100 KHR (modifiable)
-
         const filterBtns = document.querySelectorAll('.filter-btn');
         const filterSubBtns = document.querySelectorAll('.filter-sub-btn');
         const productWrappers = document.querySelectorAll('.product-wrapper');
         const checkoutBtn = document.querySelector('#checkout');
         const walletEl = document.getElementById('wallet-balance');
         let selectedType = 'all', selectedSubType = 'all';
-
-        // ===== Toast Message =====
         function showToast(msg, icon = 'success') {
             Swal.fire({
                 title: msg,
@@ -122,37 +119,63 @@
         });
 
         // ===== Render Cart =====
-        function renderCart() {
-            const tbody = document.querySelector('#cart-table tbody');
-            tbody.innerHTML = '';
-            let total = 0;
+      function renderCart() {
+    const tbody = document.querySelector('#cart-table tbody');
+    tbody.innerHTML = '';
+    let total = 0;
 
-            Object.values(cart).forEach(item => {
-                const lineTotal = item.unit_price * item.quantity;
-                total += lineTotal;
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${item.name}</td>
-                        <td>${item.size}</td>
-                        <td>${item.sugar}</td>
-                        <td>${item.quantity}</td>
-                        <td>$${lineTotal.toFixed(2)}</td>
-                    </tr>`;
-            });
+    Object.values(cart).forEach(item => {
+        const lineTotal = item.unit_price * item.quantity;
+        total += lineTotal;
+        tbody.innerHTML += `
+            <tr data-key="${item.id}_${item.size}_${item.sugar}">
+                <td>${item.name}</td>
+                <td>${item.size}</td>
+                <td>${item.sugar}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-light qty-btn" data-action="decrease">-</button>
+                    <span class="mx-1">${item.quantity}</span>
+                    <button class="btn btn-sm btn-outline-light qty-btn" data-action="increase">+</button>
+                </td>
+                <td>$${lineTotal.toFixed(2)}</td>
+            </tr>`;
+    });
 
-            if (Object.keys(cart).length > 0) {
-                const totalKHR = total * EXCHANGE_RATE;
-                tbody.innerHTML += `
-                    <tr>
-                        <td colspan="4" class="text-end fw-bold">Total (USD):</td>
-                        <td class="fw-bold">$${total.toFixed(2)}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="4" class="text-end fw-bold text-warning">Total (KHR):</td>
-                        <td class="fw-bold text-warning">៛${totalKHR.toLocaleString()}</td>
-                    </tr>`;
+    if (Object.keys(cart).length > 0) {
+        const totalKHR = total * EXCHANGE_RATE;
+        tbody.innerHTML += `
+            <tr>
+                <td colspan="4" class="text-end fw-bold">Total (USD):</td>
+                <td class="fw-bold">$${total.toFixed(2)}</td>
+            </tr>
+            <tr>
+                <td colspan="4" class="text-end fw-bold text-warning">Total (KHR):</td>
+                <td class="fw-bold text-warning">៛${totalKHR.toLocaleString()}</td>
+            </tr>`;
+    }
+
+    // Attach quantity buttons event
+    tbody.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tr = btn.closest('tr');
+            const key = tr.dataset.key;
+            const action = btn.dataset.action;
+
+            if (!cart[key]) return;
+
+            if (action === 'increase') {
+                if (cart[key].quantity < parseInt(document.querySelector(`.product-card[data-id="${cart[key].id}"]`).dataset.quantity)) {
+                    cart[key].quantity++;
+                }
+            } else if (action === 'decrease') {
+                cart[key].quantity--;
+                if (cart[key].quantity <= 0) delete cart[key];
             }
-        }
+            renderCart();
+        });
+    });
+}
+
 
         // ===== Update Stock Display =====
         function updateStockUI(card) {

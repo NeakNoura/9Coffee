@@ -1,0 +1,155 @@
+/* -----------------------------------------------------------
+   GLOBAL THEME (Coffee & Caramel)
+----------------------------------------------------------- */
+
+body {
+    background-color: #2d2323;
+}
+
+/* -----------------------------------------------------------
+   BACK BUTTON
+----------------------------------------------------------- */
+.btn-outline-light {
+    border: 2px solid #fff !important;
+    color: #fff !important;
+    border-radius: 10px;
+    padding: 6px 14px;
+    font-weight: 600;
+}
+.btn-outline-light:hover {
+    background-color: #fff !important;
+    color: #3e2f2f !important;
+}
+
+/* -----------------------------------------------------------
+   CARD
+----------------------------------------------------------- */
+.card {
+    background-color: #4b3a2f;
+    color: #f5f5f5;
+    border-radius: 14px;
+    border: 1px solid #3a2b27;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.35);
+}
+
+.card-header {
+    background-color: #db770c;
+    color: #fff;
+    font-weight: 700;
+    padding: 15px 20px;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+}
+
+/* -----------------------------------------------------------
+   TABLE
+----------------------------------------------------------- */
+
+.table thead tr {
+    background-color: #6b4c3b;
+    color: #fff;
+    font-weight: 700;
+}
+.table thead th {
+    padding: 12px;
+    letter-spacing: 0.4px;
+}
+
+.table tbody td {
+    background-color: #3e2f2f;
+    padding: 12px;
+    color: #f5f5f5;
+}
+
+.table-hover tbody tr:hover td {
+    background-color: #5a3d30 !important;
+}
+
+.table th,
+.table td {
+    border: 1px solid #6b4c3b !important;
+    vertical-align: middle !important;
+}
+
+/* -----------------------------------------------------------
+   BADGES (Stock Status)
+----------------------------------------------------------- */
+
+.badge {
+    padding: 7px 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.bg-success {
+    background-color: #27ae60 !important;
+}
+
+.bg-danger {
+    background-color: #c0392b !important;
+}
+
+/* -----------------------------------------------------------
+   ACTION BUTTONS
+----------------------------------------------------------- */
+
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: 0.25s;
+}
+
+/* Update Button */
+.btn-primary {
+    background-color: #db770c !important;
+    color: #fff !important;
+    border: none !important;
+}
+.btn-primary:hover {
+    background-color: #b36208 !important;
+}
+
+/* Add Stock Button */
+.btn-outline-success {
+    border: 2px solid #27ae60 !important;
+    color: #27ae60 !important;
+    font-weight: 700;
+}
+.btn-outline-success:hover {
+    background-color: #27ae60 !important;
+    color: #fff !important;
+}
+
+/* Number Input */
+input[type="number"] {
+    background-color: #2d2323;
+    border: 1px solid #6b4c3b;
+    color: #fff;
+    padding: 5px 8px;
+    border-radius: 6px;
+}
+input[type="number"]:focus {
+    outline: none;
+    border-color: #db770c;
+}
+
+/* -----------------------------------------------------------
+   RESPONSIVE DESIGN
+----------------------------------------------------------- */
+
+@media (max-width: 768px) {
+    .table {
+        font-size: 0.85rem;
+    }
+
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+    }
+
+    input[type=number] {
+        width: 55px;
+        font-size: 0.75rem;
+    }
+}

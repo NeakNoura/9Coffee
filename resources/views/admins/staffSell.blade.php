@@ -12,10 +12,10 @@
 
                 {{-- Header --}}
                 <div class="d-flex justify-content-between mb-2">
-                        <a href="{{ route('admins.dashboard') }}" class="btn btn-outline-light fw-bold">
-                                <i class="bi bi-arrow-left-circle"></i> Back
-                            </a>
-                            <a href="{{ route('admin.raw-material.stock')}}" class="btn btn-outline-light fw-bold">
+                    <a href="{{ route('admins.dashboard') }}" class="btn btn-outline-light fw-bold">
+                        <i class="bi bi-arrow-left-circle"></i> Back
+                    </a>
+                    <a href="{{ route('admin.raw-material.stock')}}" class="btn btn-outline-light fw-bold">
                         <i class="bi bi-exclamation-triangle"></i> Ingredients Management
                     </a>
                     <a href="{{ route('admin.low.stock') }}" class="btn btn-outline-light fw-bold">
@@ -70,17 +70,15 @@
                                 {{-- Sugar --}}
                                 <div class="mt-2">
                                     <select class="form-select sugar-select">
-    <option value="0" selected>No Sweet</option>
-    <option value="50">Less Sweet</option>
-    <option value="100">Sweet</option>
-</select>
-
+                                        <option value="0" selected>No Sweet</option>
+                                        <option value="50">Less Sweet</option>
+                                        <option value="100">Sweet</option>
+                                    </select>
                                 </div>
 
-                                {{-- Buttons --}}
-                                <div class="mt-3 d-flex justify-content-center gap-2">
+                                {{-- Add to Cart --}}
+                                <div class="mt-3 d-flex justify-content-center">
                                     <button type="button" class="btn btn-success btn-add-to-cart"><i class="bi bi-plus-circle"></i> Add</button>
-                                    <button type="button" class="btn btn-danger btn-remove-from-cart"><i class="bi bi-dash-circle"></i> Remove</button>
                                 </div>
                             </div>
                         </div>
@@ -133,19 +131,18 @@
                 </div>
 
                 {{-- Checkout --}}
-<form id="checkout-form" action="{{ route('staff.checkout') }}" method="POST">
+                <form id="checkout-form" action="{{ route('staff.checkout') }}" method="POST">
                     @csrf
                     <input type="hidden" name="cart_data" id="cart_data">
-                    <button type="button" id="checkout" class="btn btn-warning w-100 py-2 fw-bold">
+                    <button type="button" id="checkout" class="btn btn-warning w-100 py-2 fw-bold mt-2">
                         <i class="bi bi-cash-coin"></i> Checkout & Print
                     </button>
-                    <!-- Receipt Preview Modal -->
+                    <!-- Receipt Modal -->
                     <div class="modal fade" id="receiptModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-lg">
-                        <div class="modal-content" id="receipt-content"
-                            style="font-family: 'Khmer OS', sans-serif; background-color:#fff; color:#000;">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content" id="receipt-content" style="font-family: 'Khmer OS', sans-serif; background-color:#fff; color:#000;">
+                            </div>
                         </div>
-                    </div>
                     </div>
                 </form>
             </div>
@@ -157,7 +154,6 @@
     const checkoutUrl = "{{ route('staff.checkout') }}";
 </script>
 
-{{-- JS + SweetAlert --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{{ asset('assets/js/staff-sell.js') }}"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">

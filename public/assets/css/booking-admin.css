@@ -1,31 +1,107 @@
-html, body {
-    height: 100%;
-    background-color: #2e2424;
+/* Booking form & table styles - Refined colors */
+.booking-wrapper {
+    padding: 20px;
 }
 
-.table-responsive {
-    scrollbar-width: thin;
-    scrollbar-color: #db770c #3e2f2f;
+/* Card */
+.booking-card,
+.bookings-table-card {
+    background-color: #2e2b28; /* darker, cleaner dark tone */
+    color: #f5f5f5;
+    border: none;
 }
 
-.table-responsive::-webkit-scrollbar {
-    width: 8px;
+/* Card headers */
+.booking-card-header,
+.bookings-table-header {
+    background-color: #f39c12; /* brighter orange for highlight */
+    color: #1c1c1c; /* darker text for contrast */
+    font-weight: 700;
+    text-align: center;
 }
 
-.table-responsive::-webkit-scrollbar-track {
-    background: #3e2f2f;
-}
-
-.table-responsive::-webkit-scrollbar-thumb {
-    background-color: #db770c;
+/* Input fields */
+.booking-input {
+    background-color: #3b3735; /* softer dark tone */
+    color: #fff;
+    border: 1px solid #6b4c3b;
     border-radius: 4px;
 }
 
-.table-hover tbody tr:hover {
-    background-color: rgba(219, 119, 12, 0.2);
+/* Submit button */
+.btn-submit-booking {
+    background-color: #f39c12;
+    color: #1c1c1c;
+    font-weight: 600;
+    border: none;
+    border-radius: 4px;
+    transition: 0.3s;
 }
 
-.card-header h4,
-.btn {
-    font-weight: 500;
+.btn-submit-booking:hover {
+    background-color: #e08e0b;
+    color: #fff;
+}
+
+/* Table container */
+.table-scroll {
+    max-height: 60vh;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+/* Table */
+.bookings-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+}
+
+.bookings-table th,
+.bookings-table td {
+    border: 1px solid #6b4c3b;
+    vertical-align: middle;
+}
+
+.bookings-table thead.sticky-top {
+    background-color: #3f3a37;
+    color: #f5f5f5;
+    z-index: 10;
+}
+
+/* Table row hover */
+.bookings-table tbody tr:hover {
+    background-color: #44403c;
+}
+
+/* Status badges */
+.badge-warning {
+    background-color: #f1c40f;
+    color: #1c1c1c;
+}
+
+.badge-success {
+    background-color: #27ae60;
+    color: #fff;
+}
+
+.badge-danger {
+    background-color: #c0392b;
+    color: #fff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .booking-wrapper {
+        padding: 10px;
+    }
+
+    .booking-card,
+    .bookings-table-card {
+        font-size: 0.9rem;
+    }
+
+    .btn-submit-booking {
+        width: 100%;
+    }
 }

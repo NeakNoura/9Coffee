@@ -82,7 +82,7 @@
         </div>
     </div>
 </div>
-<link rel="stylesheet" href="{{ asset('assets/css/raw-material.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/inventory.css') }}">
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
